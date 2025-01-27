@@ -9,8 +9,12 @@ import { AppBskyFeedDefs } from "@atproto/api";
 
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
-  const [postsFeed1, setPostsFeed1] = useState<AppBskyFeedDefs.PostView[]>([]);
-  const [postsFeed2, setPostsFeed2] = useState<AppBskyFeedDefs.PostView[]>([]);
+  const [postsFeed1, setPostsFeed1] = useState<AppBskyFeedDefs.FeedViewPost[]>(
+    []
+  );
+  const [postsFeed2, setPostsFeed2] = useState<AppBskyFeedDefs.FeedViewPost[]>(
+    []
+  );
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
