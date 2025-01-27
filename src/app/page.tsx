@@ -174,21 +174,6 @@ export default function Homepage() {
               ></path>
             </svg>
           </div>
-          {isAuthenticated && (
-            <button
-              type="button"
-              onClick={() => {
-                logout();
-                setIsAuthenticated(false);
-                setShowLoginDialog(true);
-                setPostsFeed1([]);
-                setPostsFeed2([]);
-              }}
-              className="px-3 py-1.5 text-xs text-text-primary bg-button-secondary rounded-lg h-8 cursor-pointer"
-            >
-              Logout
-            </button>
-          )}
         </div>
         <div className="feed border-x border-border-primary">
           <ul className="feedlist text-text-secondary font-medium list-none tap-highlight-color-[rgba(0,0,0,0)] font-smoothing-antialiased m-0 box-border h-15 shadow-[0_1px_0_var(--transparentBorder)] flex flex-row px-6 items-center w-full sticky top-0 bg-[var(--backgroundColor)] z-10 gap-6 justify-center">
@@ -286,6 +271,21 @@ export default function Homepage() {
           <p className="text-text-tertiary text-xs">
             An ode to the community app by Read.cv
           </p>
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                setIsAuthenticated(false);
+                setShowLoginDialog(true);
+                setPostsFeed1([]);
+                setPostsFeed2([]);
+              }}
+              className="px-3 py-1.5 mt-4 text-xs text-text-primary bg-button-secondary rounded-lg h-8 cursor-pointer"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </>
