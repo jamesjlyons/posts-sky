@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { agent, login, checkSession, logout } from "~/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { LoginDialog } from "../components/LoginDialog";
@@ -22,6 +22,11 @@ export default function Homepage() {
   );
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [cursorFeed1, setCursorFeed1] = useState<string | undefined>();
+  const [cursorFeed2, setCursorFeed2] = useState<string | undefined>();
+  const observerRef = useRef<IntersectionObserver>();
+  const loadingRef = useRef<HTMLDivElement>(null);
 
   // const { feed: postsArray, cursor: nextPage } = data;
 
@@ -55,13 +60,14 @@ export default function Homepage() {
     }
   };
 
-  const fetchPosts = async (feedKey: "feed1" | "feed2") => {
-    if (!isAuthenticated) return [];
+  const fetchPosts = async (feedKey: "feed1" | "feed2", cursor?: string) => {
+    if (!isAuthenticated) return { posts: [], cursor: undefined };
 
     const { data } = await agent.app.bsky.feed.getFeed(
       {
         feed: feedUrls[feedKey],
         limit: 30,
+        cursor,
       },
       {
         headers: {
@@ -69,16 +75,64 @@ export default function Homepage() {
         },
       }
     );
-    return data.feed;
+    return { posts: data.feed, cursor: data.cursor };
   };
+
+  const loadMorePosts = useCallback(async () => {
+    if (loadingMore) return;
+
+    setLoadingMore(true);
+    try {
+      const cursor = selectedFeed === "feed1" ? cursorFeed1 : cursorFeed2;
+      const { posts, cursor: newCursor } = await fetchPosts(
+        selectedFeed,
+        cursor
+      );
+
+      if (selectedFeed === "feed1") {
+        setPostsFeed1((prev) => [...prev, ...posts]);
+        setCursorFeed1(newCursor);
+      } else {
+        setPostsFeed2((prev) => [...prev, ...posts]);
+        setCursorFeed2(newCursor);
+      }
+    } catch (error) {
+      console.error("Error loading more posts:", error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, selectedFeed, cursorFeed1, cursorFeed2, fetchPosts]);
+
+  const lastPostRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (loadingMore) return;
+
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          loadMorePosts();
+        }
+      });
+
+      if (node) {
+        observerRef.current.observe(node);
+      }
+    },
+    [loadingMore, selectedFeed, loadMorePosts]
+  );
 
   const loadPosts = async (feedKey: "feed1" | "feed2") => {
     if (feedKey === "feed1" && postsFeed1.length === 0) {
-      const posts = await fetchPosts("feed1");
+      const { posts, cursor } = await fetchPosts("feed1");
       setPostsFeed1(posts);
+      setCursorFeed1(cursor);
     } else if (feedKey === "feed2" && postsFeed2.length === 0) {
-      const posts = await fetchPosts("feed2");
+      const { posts, cursor } = await fetchPosts("feed2");
       setPostsFeed2(posts);
+      setCursorFeed2(cursor);
     }
   };
 
@@ -90,7 +144,7 @@ export default function Homepage() {
     if (isAuthenticated) {
       loadPosts(selectedFeed);
     }
-  }, [selectedFeed, isAuthenticated]);
+  }, [selectedFeed, isAuthenticated, loadPosts]);
 
   const currentPosts = selectedFeed === "feed1" ? postsFeed1 : postsFeed2;
 
@@ -161,17 +215,19 @@ export default function Homepage() {
           </ul>
 
           <ul className="feedPosts">
-            {currentPosts.map((item) => {
+            {currentPosts.map((item, index) => {
               const post = item.post;
               const author = post.author;
               const record = post.record as AppBskyFeedPost.Record;
               const timeAgo = formatDistanceToNow(new Date(record.createdAt), {
                 addSuffix: true,
               });
+              const isLastPost = index === currentPosts.length - 1;
 
               return (
                 <li
-                  key={post.cid}
+                  key={`${post.cid}-${index}`}
+                  ref={isLastPost ? lastPostRef : null}
                   className="border-b border-border-primary px-6 pt-5 pb-4"
                 >
                   <div className="flex mb-2">
@@ -199,9 +255,9 @@ export default function Homepage() {
                   {post.embed?.$type === "app.bsky.embed.images#view" && (
                     <div className="media-container mt-2 grid gap-2">
                       {(post.embed as AppBskyEmbedImages.View).images.map(
-                        (image, index) => (
+                        (image, imageIndex) => (
                           <Image
-                            key={index}
+                            key={`${post.cid}-image-${imageIndex}-${index}`}
                             src={image.fullsize || "/default-post-image.png"}
                             alt={image.alt || "Post media"}
                             width={600}
@@ -220,6 +276,9 @@ export default function Homepage() {
                 </li>
               );
             })}
+            <div ref={loadingRef} className="p-4 text-center">
+              {loadingMore && "Loading more posts..."}
+            </div>
           </ul>
         </div>
         <div className="p-6">
