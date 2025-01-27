@@ -1,10 +1,76 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root {
+  /* --background: rgb(34, 34, 34);
+  --foreground: rgb(51, 51, 51);
+  --text-primary: rgb(238, 238, 238);
+  --text-secondary: rgb(187, 187, 187); */
+
+  --backgroundColor: #222;
+  --inputBackgroundColor: #333;
+  --inputBackgroundActiveColor: #444;
+  --primaryBorderColor: #333;
+  --secondaryBorderColor: #333;
+  --backdrop: rgba(0, 0, 0, 0.5);
+  --transparentBorder: hsla(0, 0%, 100%, 0.1);
+  --grey1: #eee;
+  --grey2: #bbb;
+  --grey3: #888;
+  --selectionColor: rgba(109, 175, 255, 0.5);
+  --marketingBackground: #1a1a1a;
+  --wash1: #4e4e4e;
+  --wash2: #383838;
+  --posts-yellow-wash: color(display-p3 1 0.72 0.12 / 0.3);
 }
 
+/*
+
+:root {
+    --type-size: 14px;
+    --secondary-type-size: 12px;
+    --line-height: 1.6;
+    --emoji-font: "color-emoji";
+    --default-font: "Graphik",sans-serif;
+    --backgroundColor: #fff;
+    --inputBackgroundColor: #f2f2f2;
+    --primaryBorderColor: #e5e5e5;
+    --secondaryBorderColor: #f2f2f2;
+    --backdrop: rgba(0,0,0,.3);
+    --transparentBorder: rgba(0,0,0,.05);
+    --grey1: #111;
+    --grey2: #555;
+    --grey3: #999;
+    --green: #32bd64;
+    --orange: orange;
+    --red: #f04b4b;
+    --blue: #0788f5;
+    --selectionColor: rgba(109,175,255,.5);
+    --content-padding: 72px;
+    --badge-color: #f04b4b;
+    --sidebar-width: min(330px,calc(100vw - 48px));
+    --compressed-sidebar-width: 60px;
+    --marketingBackground: #fafafa;
+    --wash1: #e5e5e5;
+    --wash2: #f2f2f2
+}
+
+:root.dark {
+    --backgroundColor: #222;
+    --inputBackgroundColor: #333;
+    --inputBackgroundActiveColor: #444;
+    --primaryBorderColor: #333;
+    --secondaryBorderColor: #333;
+    --backdrop: rgba(0,0,0,.5);
+    --transparentBorder: hsla(0,0%,100%,.1);
+    --grey1: #eee;
+    --grey2: #bbb;
+    --grey3: #888;
+    --selectionColor: rgba(109,175,255,.5);
+    --marketingBackground: #1a1a1a;
+    --wash1: #4e4e4e;
+    --wash2: #383838
+}
+    
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -19,8 +85,13 @@ body {
 } */
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--backgroundColor);
+  /* --color-foreground: var(--foreground); */
+  --color-text-primary: var(--grey1);
+  --color-text-secondary: var(--grey2);
+  --color-text-tertiary: var(--grey3);
+  --color-border-primary: var(--primaryBorderColor);
+  --color-posts-yellow-wash: var(--posts-yellow-wash);
 }
 
 /*
