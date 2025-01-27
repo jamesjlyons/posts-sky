@@ -149,7 +149,7 @@ export default function Homepage() {
                         key={index}
                         src={image.fullsize}
                         alt={image.alt || "Post media"}
-                        className="w-full h-auto max-h-[600px] rounded-lg object-cover"
+                        className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
                         style={{
                           aspectRatio: `${image.aspectRatio.width} / ${image.aspectRatio.height}`,
                         }}
