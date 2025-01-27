@@ -10,6 +10,7 @@ import type {
   AppBskyFeedPost,
   AppBskyEmbedImages,
 } from "@atproto/api";
+import Image from "next/image";
 
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
@@ -174,10 +175,12 @@ export default function Homepage() {
                   className="border-b border-border-primary px-6 pt-5 pb-4"
                 >
                   <div className="flex mb-2">
-                    <img
-                      src={author.avatar}
+                    <Image
+                      src={author.avatar || "/default-avatar.png"}
                       alt={`${author.displayName}'s avatar`}
-                      className="w-10 h-10 rounded-full mr-3"
+                      width={40}
+                      height={40}
+                      className="rounded-full mr-3 w-10 h-10"
                     />
                     <div className="flex flex-col">
                       <div className="flex flex-row gap-2">
@@ -197,14 +200,18 @@ export default function Homepage() {
                     <div className="media-container mt-2 grid gap-2">
                       {(post.embed as AppBskyEmbedImages.View).images.map(
                         (image, index) => (
-                          <img
+                          <Image
                             key={index}
-                            src={image.fullsize}
+                            src={image.fullsize || "/default-post-image.png"}
                             alt={image.alt || "Post media"}
+                            width={600}
+                            height={
+                              image.aspectRatio
+                                ? (600 / image.aspectRatio.width) *
+                                  image.aspectRatio.height
+                                : 600
+                            }
                             className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
-                            style={{
-                              aspectRatio: `${image.aspectRatio.width} / ${image.aspectRatio.height}`,
-                            }}
                           />
                         )
                       )}
