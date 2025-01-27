@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { agent, login, checkSession, logout } from "~/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { LoginDialog } from "../components/LoginDialog";
-import { AppBskyFeedDefs } from "@atproto/api";
+import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
 
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
@@ -159,12 +159,10 @@ export default function Homepage() {
             {currentPosts.map((item) => {
               const post = item.post;
               const author = post.author;
-              const timeAgo = formatDistanceToNow(
-                new Date(post.record.createdAt),
-                {
-                  addSuffix: true,
-                }
-              );
+              const record = post.record as AppBskyFeedPost.Record;
+              const timeAgo = formatDistanceToNow(new Date(record.createdAt), {
+                addSuffix: true,
+              });
 
               return (
                 <li
