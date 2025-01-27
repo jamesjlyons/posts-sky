@@ -24,7 +24,7 @@ export function LoginDialog({ isOpen, onClose, onLogin }: LoginDialogProps) {
     setLoginError("");
     try {
       await onLogin(loginForm);
-    } catch (error) {
+    } catch {
       setLoginError("Invalid credentials. Please try again.");
     }
   };

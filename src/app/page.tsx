@@ -5,11 +5,12 @@ import React, { useState, useEffect } from "react";
 import { agent, login, checkSession, logout } from "~/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { LoginDialog } from "../components/LoginDialog";
+import { AppBskyFeedDefs } from "@atproto/api";
 
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
-  const [postsFeed1, setPostsFeed1] = useState<any[]>([]);
-  const [postsFeed2, setPostsFeed2] = useState<any[]>([]);
+  const [postsFeed1, setPostsFeed1] = useState<AppBskyFeedDefs.PostView[]>([]);
+  const [postsFeed2, setPostsFeed2] = useState<AppBskyFeedDefs.PostView[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
