@@ -92,6 +92,10 @@ body {
   --color-text-tertiary: var(--grey3);
   --color-border-primary: var(--primaryBorderColor);
   --color-posts-yellow-wash: var(--posts-yellow-wash);
+  --color-button-secondary: var(--inputBackgroundColor);
+  --color-backdrop: var(--backdrop);
+  --color-input: var(--inputBackgroundColor);
+  --color-inputActive: var(--inputBackgroundActiveColor);
 }
 
 /*
