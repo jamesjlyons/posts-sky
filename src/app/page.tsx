@@ -165,7 +165,7 @@ export default function Homepage() {
       <div className="p-6">
         <p>PostsSky</p>
         <p className="text-text-tertiary text-xs">
-          A ode to the community app by Read.cv
+          An ode to the community app by Read.cv
         </p>
       </div>
     </div>
