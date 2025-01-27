@@ -5,7 +5,11 @@ import React, { useState, useEffect } from "react";
 import { agent, login, checkSession, logout } from "~/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { LoginDialog } from "../components/LoginDialog";
-import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
+import type {
+  AppBskyFeedDefs,
+  AppBskyFeedPost,
+  AppBskyEmbedImages,
+} from "@atproto/api";
 
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
@@ -166,7 +170,7 @@ export default function Homepage() {
 
               return (
                 <li
-                  key={post.cid as string}
+                  key={post.cid}
                   className="border-b border-border-primary px-6 pt-5 pb-4"
                 >
                   <div className="flex mb-2">
@@ -191,17 +195,19 @@ export default function Homepage() {
                   </div>
                   {post.embed?.$type === "app.bsky.embed.images#view" && (
                     <div className="media-container mt-2 grid gap-2">
-                      {post.embed.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image.fullsize}
-                          alt={image.alt || "Post media"}
-                          className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
-                          style={{
-                            aspectRatio: `${image.aspectRatio.width} / ${image.aspectRatio.height}`,
-                          }}
-                        />
-                      ))}
+                      {(post.embed as AppBskyEmbedImages.View).images.map(
+                        (image, index) => (
+                          <img
+                            key={index}
+                            src={image.fullsize}
+                            alt={image.alt || "Post media"}
+                            className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
+                            style={{
+                              aspectRatio: `${image.aspectRatio.width} / ${image.aspectRatio.height}`,
+                            }}
+                          />
+                        )
+                      )}
                     </div>
                   )}
                 </li>
