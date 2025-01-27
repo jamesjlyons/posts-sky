@@ -12,6 +12,13 @@ import type {
 } from "@atproto/api";
 import Image from "next/image";
 
+const feedUrls = {
+  feed1:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
+  feed2:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
+} as const;
+
 export default function Homepage() {
   const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2">("feed1");
   const [postsFeed1, setPostsFeed1] = useState<AppBskyFeedDefs.FeedViewPost[]>(
@@ -25,17 +32,10 @@ export default function Homepage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [cursorFeed1, setCursorFeed1] = useState<string | undefined>();
   const [cursorFeed2, setCursorFeed2] = useState<string | undefined>();
-  const observerRef = useRef<IntersectionObserver>();
-  const loadingRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement | null>(null);
 
   // const { feed: postsArray, cursor: nextPage } = data;
-
-  const feedUrls = {
-    feed1:
-      "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
-    feed2:
-      "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
-  };
 
   const handleLogin = async (credentials: {
     identifier: string;
@@ -60,23 +60,26 @@ export default function Homepage() {
     }
   };
 
-  const fetchPosts = async (feedKey: "feed1" | "feed2", cursor?: string) => {
-    if (!isAuthenticated) return { posts: [], cursor: undefined };
+  const fetchPosts = useCallback(
+    async (feedKey: "feed1" | "feed2", cursor?: string) => {
+      if (!isAuthenticated) return { posts: [], cursor: undefined };
 
-    const { data } = await agent.app.bsky.feed.getFeed(
-      {
-        feed: feedUrls[feedKey],
-        limit: 30,
-        cursor,
-      },
-      {
-        headers: {
-          "Accept-Language": "en-US",
+      const { data } = await agent.app.bsky.feed.getFeed(
+        {
+          feed: feedUrls[feedKey],
+          limit: 30,
+          cursor,
         },
-      }
-    );
-    return { posts: data.feed, cursor: data.cursor };
-  };
+        {
+          headers: {
+            "Accept-Language": "en-US",
+          },
+        }
+      );
+      return { posts: data.feed, cursor: data.cursor };
+    },
+    [isAuthenticated]
+  );
 
   const loadMorePosts = useCallback(async () => {
     if (loadingMore) return;
@@ -121,20 +124,31 @@ export default function Homepage() {
         observerRef.current.observe(node);
       }
     },
-    [loadingMore, selectedFeed, loadMorePosts]
+    [loadingMore, loadMorePosts]
   );
 
-  const loadPosts = async (feedKey: "feed1" | "feed2") => {
-    if (feedKey === "feed1" && postsFeed1.length === 0) {
-      const { posts, cursor } = await fetchPosts("feed1");
-      setPostsFeed1(posts);
-      setCursorFeed1(cursor);
-    } else if (feedKey === "feed2" && postsFeed2.length === 0) {
-      const { posts, cursor } = await fetchPosts("feed2");
-      setPostsFeed2(posts);
-      setCursorFeed2(cursor);
-    }
-  };
+  const loadPosts = useCallback(
+    async (feedKey: "feed1" | "feed2") => {
+      if (feedKey === "feed1" && postsFeed1.length === 0) {
+        const { posts, cursor } = await fetchPosts("feed1");
+        setPostsFeed1(posts);
+        setCursorFeed1(cursor);
+      } else if (feedKey === "feed2" && postsFeed2.length === 0) {
+        const { posts, cursor } = await fetchPosts("feed2");
+        setPostsFeed2(posts);
+        setCursorFeed2(cursor);
+      }
+    },
+    [
+      fetchPosts,
+      postsFeed1.length,
+      postsFeed2.length,
+      setPostsFeed1,
+      setPostsFeed2,
+      setCursorFeed1,
+      setCursorFeed2,
+    ]
+  );
 
   useEffect(() => {
     checkAuth();
@@ -281,7 +295,7 @@ export default function Homepage() {
                 setPostsFeed1([]);
                 setPostsFeed2([]);
               }}
-              className="px-3 py-1.5 mt-4 text-xs text-text-primary bg-button-secondary rounded-lg h-8 cursor-pointer"
+              className="px-3 py-1.5 mt-4 ext-xs text-text-primary bg-button-secondary rounded-lg h-8 cursor-pointer"
             >
               Logout
             </button>
