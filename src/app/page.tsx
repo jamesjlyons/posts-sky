@@ -186,9 +186,7 @@ export default function Homepage() {
                         <div className="text-text-tertiary">{timeAgo}</div>
                       </div>
 
-                      <div className="text-text-secondary">
-                        {post.record.text}
-                      </div>
+                      <div className="text-text-secondary">{record.text}</div>
                     </div>
                   </div>
                   {post.embed?.$type === "app.bsky.embed.images#view" && (
