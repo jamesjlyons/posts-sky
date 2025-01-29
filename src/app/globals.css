@@ -6,21 +6,48 @@
   --text-primary: rgb(238, 238, 238);
   --text-secondary: rgb(187, 187, 187); */
 
-  --backgroundColor: #222;
-  --inputBackgroundColor: #333;
-  --inputBackgroundActiveColor: #444;
-  --primaryBorderColor: #333;
-  --secondaryBorderColor: #333;
-  --backdrop: rgba(0, 0, 0, 0.5);
-  --transparentBorder: hsla(0, 0%, 100%, 0.1);
-  --grey1: #eee;
-  --grey2: #bbb;
-  --grey3: #888;
+  --backgroundColor: #fff;
+  --inputBackgroundColor: #f2f2f2;
+  --primaryBorderColor: #e5e5e5;
+  --secondaryBorderColor: #f2f2f2;
+  --backdrop: rgba(0, 0, 0, 0.3);
+  --transparentBorder: rgba(0, 0, 0, 0.05);
+  --grey1: #111;
+  --grey2: #555;
+  --grey3: #999;
+  --green: #32bd64;
+  --orange: orange;
+  --red: #f04b4b;
+  --blue: #0788f5;
   --selectionColor: rgba(109, 175, 255, 0.5);
-  --marketingBackground: #1a1a1a;
-  --wash1: #4e4e4e;
-  --wash2: #383838;
+  --content-padding: 72px;
+  --badge-color: #f04b4b;
+  --sidebar-width: min(330px, calc(100vw - 48px));
+  --compressed-sidebar-width: 60px;
+  --marketingBackground: #fafafa;
+  --wash1: #e5e5e5;
+  --wash2: #f2f2f2;
   --posts-yellow-wash: color(display-p3 1 0.72 0.12 / 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --backgroundColor: #222;
+    --inputBackgroundColor: #333;
+    --inputBackgroundActiveColor: #444;
+    --primaryBorderColor: #333;
+    --secondaryBorderColor: #333;
+    --backdrop: rgba(0, 0, 0, 0.5);
+    --transparentBorder: hsla(0, 0%, 100%, 0.1);
+    --grey1: #eee;
+    --grey2: #bbb;
+    --grey3: #888;
+    --selectionColor: rgba(109, 175, 255, 0.5);
+    --marketingBackground: #1a1a1a;
+    --wash1: #4e4e4e;
+    --wash2: #383838;
+    --posts-yellow-wash: color(display-p3 1 0.72 0.12 / 0.3);
+  }
 }
 
 /*
