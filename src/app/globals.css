@@ -28,6 +28,8 @@
   --wash1: #e5e5e5;
   --wash2: #f2f2f2;
   --posts-yellow-wash: color(display-p3 1 0.72 0.12 / 0.3);
+
+  --nav-icon-color: #555;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,6 +49,8 @@
     --wash1: #4e4e4e;
     --wash2: #383838;
     --posts-yellow-wash: color(display-p3 1 0.72 0.12 / 0.3);
+
+    --nav-icon-color: #bbb;
   }
 }
 
