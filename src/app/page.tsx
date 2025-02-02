@@ -217,6 +217,7 @@ export default function Homepage() {
                   }
                 );
                 const isLastPost = index === currentPosts.length - 1;
+                const replyCount = post.replyCount || 0;
 
                 return (
                   <li
@@ -230,49 +231,76 @@ export default function Homepage() {
                       router.push(`/${authorHandle}/${postId}`);
                     }}
                   >
-                    <div className="flex mb-2">
-                      <Image
-                        src={author.avatar || "/default-avatar.png"}
-                        alt={`${author.displayName}'s avatar`}
-                        width={40}
-                        height={40}
-                        className="rounded-full mr-3 w-10 h-10"
-                      />
-                      <div className="flex flex-col">
-                        <div className="flex flex-row gap-2">
-                          <div className="text-text-primary">
-                            {author.displayName}
+                    <div className="flex flex-col">
+                      <div className="flex mb-2">
+                        <Image
+                          src={author.avatar || "/default-avatar.png"}
+                          alt={`${author.displayName}'s avatar`}
+                          width={40}
+                          height={40}
+                          className="rounded-full mr-3 w-10 h-10"
+                        />
+                        <div className="flex flex-col flex-1">
+                          <div className="flex flex-row gap-2">
+                            <div className="text-text-primary">
+                              {author.displayName}
+                            </div>
+                            <div className="text-text-tertiary">
+                              @{author.handle}
+                            </div>
+                            <div className="text-text-tertiary">{timeAgo}</div>
                           </div>
-                          <div className="text-text-tertiary">
-                            @{author.handle}
+                          <div className="text-text-secondary">
+                            {record.text}
                           </div>
-                          <div className="text-text-tertiary">{timeAgo}</div>
-                        </div>
 
-                        <div className="text-text-secondary">{record.text}</div>
+                          {post.embed?.$type ===
+                            "app.bsky.embed.images#view" && (
+                            <div className="media-container mt-2 grid gap-2">
+                              {(
+                                post.embed as AppBskyEmbedImages.View
+                              ).images.map((image, imageIndex) => (
+                                <Image
+                                  key={`${post.cid}-image-${imageIndex}-${index}`}
+                                  src={
+                                    image.fullsize || "/default-post-image.png"
+                                  }
+                                  alt={image.alt || "Post media"}
+                                  width={600}
+                                  height={
+                                    image.aspectRatio
+                                      ? (600 / image.aspectRatio.width) *
+                                        image.aspectRatio.height
+                                      : 600
+                                  }
+                                  className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
+                                />
+                              ))}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1 mt-2 text-text-tertiary">
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M3.875 10.5A6.125 6.125 0 0110 4.375h4a6.125 6.125 0 013.6 11.08l-5.939 4.315a.625.625 0 01-.978-.638l.542-2.507H10A6.125 6.125 0 013.875 10.5zm14.07-2.866A4.868 4.868 0 0014 5.625h-4a4.875 4.875 0 100 9.75h1.69c.558 0 .973.515.855 1.06l-.294 1.362 4.615-3.353a4.875 4.875 0 001.078-6.81z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                            {replyCount > 0 && (
+                              <span className="text-sm">{replyCount}</span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    {post.embed?.$type === "app.bsky.embed.images#view" && (
-                      <div className="media-container mt-2 grid gap-2">
-                        {(post.embed as AppBskyEmbedImages.View).images.map(
-                          (image, imageIndex) => (
-                            <Image
-                              key={`${post.cid}-image-${imageIndex}-${index}`}
-                              src={image.fullsize || "/default-post-image.png"}
-                              alt={image.alt || "Post media"}
-                              width={600}
-                              height={
-                                image.aspectRatio
-                                  ? (600 / image.aspectRatio.width) *
-                                    image.aspectRatio.height
-                                  : 600
-                              }
-                              className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
-                            />
-                          )
-                        )}
-                      </div>
-                    )}
                   </li>
                 );
               })}
