@@ -12,6 +12,7 @@ import type {
 } from "@atproto/api";
 import Image from "next/image";
 import { MainLayout } from "../components/MainLayout";
+import { useRouter } from "next/navigation";
 
 const feedUrls = {
   feed1:
@@ -35,6 +36,7 @@ export default function Homepage() {
   const [cursorFeed2, setCursorFeed2] = useState<string | undefined>();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   // const { feed: postsArray, cursor: nextPage } = data;
 
@@ -222,8 +224,10 @@ export default function Homepage() {
                     ref={isLastPost ? lastPostRef : null}
                     className="border-b border-border-primary px-6 pt-5 pb-4 cursor-pointer"
                     onClick={() => {
-                      const encodedUri = encodeURIComponent(post.uri);
-                      window.location.href = `/post/${encodedUri}`;
+                      const uriParts = post.uri.split("/");
+                      const postId = uriParts[uriParts.length - 1];
+                      const authorHandle = post.author.handle;
+                      router.push(`/${authorHandle}/${postId}`);
                     }}
                   >
                     <div className="flex mb-2">
