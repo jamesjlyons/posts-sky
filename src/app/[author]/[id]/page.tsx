@@ -7,9 +7,9 @@ import {
   AppBskyFeedPost,
   AppBskyEmbedImages,
 } from "@atproto/api";
-import { agent, checkSession, login } from "~/lib/api";
-import { MainLayout } from "~/components/MainLayout";
-import { LoginDialog } from "~/components/LoginDialog";
+import { agent, checkSession, login } from "../../../lib/api";
+import { MainLayout } from "../../../components/MainLayout";
+import { LoginDialog } from "../../../components/LoginDialog";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 
