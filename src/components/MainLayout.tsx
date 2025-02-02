@@ -1,11 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  useRouter,
-  usePathname,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import Link from "next/link";
 // import Image from "next/image";
 
