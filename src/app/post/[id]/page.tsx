@@ -94,6 +94,30 @@ export default function PostPage() {
         isAuthenticated={isAuthenticated}
         mainContent={
           <div className="flex flex-col">
+            <ul className="feedlist text-text-secondary font-medium list-none tap-highlight-color-[rgba(0,0,0,0)] font-smoothing-antialiased m-0 box-border h-15 shadow-[0_1px_0_var(--transparentBorder)] flex flex-row px-6 items-center w-full sticky top-0 bg-[var(--backgroundColor)] z-10 gap-6">
+              <li
+                className="text-text-primary cursor-pointer flex items-center gap-2"
+                onClick={() => window.history.back()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && window.history.back()}
+                aria-label="Go back"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                    fill="currentColor"
+                  />
+                </svg>
+                Thread
+              </li>
+            </ul>
             <div className="border-b border-border-primary px-6 pt-5 pb-4">
               <div className="flex mb-2">
                 <Image
