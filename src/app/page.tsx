@@ -220,7 +220,7 @@ export default function Homepage() {
                   <li
                     key={`${post.cid}-${index}`}
                     ref={isLastPost ? lastPostRef : null}
-                    className="border-b border-border-primary px-6 pt-5 pb-4 cursor-pointer hover:bg-gray-50"
+                    className="border-b border-border-primary px-6 pt-5 pb-4 cursor-pointer"
                     onClick={() => {
                       const encodedUri = encodeURIComponent(post.uri);
                       window.location.href = `/post/${encodedUri}`;
