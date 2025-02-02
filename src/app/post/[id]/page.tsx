@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { MainLayout } from "../../../components/MainLayout";
 import { agent, checkSession, login } from "~/lib/api";
@@ -35,7 +35,7 @@ export default function PostPage() {
     }
   };
 
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     try {
       const postId = decodeURIComponent(params.id as string);
       const { data } = await agent.app.bsky.feed.getPostThread({
@@ -44,16 +44,16 @@ export default function PostPage() {
       });
 
       if (data.thread.post) {
-        setPost(data.thread.post);
+        setPost(data.thread.post as AppBskyFeedDefs.PostView);
         if (data.thread.replies) {
-          setReplies(data.thread.replies);
+          setReplies(data.thread.replies as AppBskyFeedDefs.FeedViewPost[]);
         }
       }
     } catch (error) {
       console.error("Error fetching post:", error);
     }
     setIsLoading(false);
-  };
+  }, [params.id]);
 
   useEffect(() => {
     const init = async () => {
@@ -68,7 +68,7 @@ export default function PostPage() {
     };
 
     init();
-  }, [params.id]);
+  }, [params.id, fetchPost]);
 
   if (isLoading) {
     return <MainLayout mainContent={<div>Loading...</div>} />;
