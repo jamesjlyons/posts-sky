@@ -184,9 +184,9 @@ export default function PostPage() {
                             fill="currentColor"
                           />
                         </svg>
-                        {parentPost.replyCount > 0 && (
+                        {(parentPost.replyCount ?? 0) > 0 && (
                           <span className="text-sm">
-                            {parentPost.replyCount}
+                            {parentPost.replyCount ?? 0}
                           </span>
                         )}
                       </div>
@@ -240,8 +240,8 @@ export default function PostPage() {
                       fill="currentColor"
                     />
                   </svg>
-                  {post.replyCount > 0 && (
-                    <span className="text-sm">{post.replyCount}</span>
+                  {(post.replyCount ?? 0) > 0 && (
+                    <span className="text-sm">{post.replyCount ?? 0}</span>
                   )}
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function PostPage() {
                             fill="currentColor"
                           />
                         </svg>
-                        {reply.post.replyCount > 0 && (
+                        {(reply.post.replyCount ?? 0) > 0 && (
                           <span className="text-sm">
                             {reply.post.replyCount}
                           </span>
