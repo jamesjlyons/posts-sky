@@ -126,8 +126,8 @@ export function PostItem({
                 fill="currentColor"
               />
             </svg>
-            {(post.replyCount ?? 0) > 0 && (
-              <span className="text-sm">{post.replyCount ?? 0}</span>
+            {post.replyCount && post.replyCount > 0 && (
+              <span className="text-sm">{post.replyCount}</span>
             )}
           </div>
         </div>
