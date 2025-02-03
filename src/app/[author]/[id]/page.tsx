@@ -144,33 +144,58 @@ export default function PostPage() {
             {/* Parent Post (if exists) */}
             {parentPost && (
               <div className="px-6 pt-5">
-                <div className="flex">
-                  <div className="flex flex-col items-center">
-                    <Image
-                      src={parentPost.author.avatar || "/default-avatar.png"}
-                      alt={`${parentPost.author.displayName}'s avatar`}
-                      width={40}
-                      height={40}
-                      className="rounded-full w-10 h-10"
-                    />
-                    <div className="w-0.5 bg-border-primary flex-1 mt-2"></div>
-                  </div>
-                  <div className="flex flex-col flex-1 ml-3">
-                    <div className="flex flex-row gap-2">
-                      <div className="text-text-primary">
-                        {parentPost.author.displayName}
-                      </div>
-                      <div className="text-text-tertiary">
-                        @{parentPost.author.handle}
-                      </div>
+                <div className="flex flex-col">
+                  <div className="flex">
+                    <div className="flex flex-col items-center">
+                      <Image
+                        src={parentPost.author.avatar || "/default-avatar.png"}
+                        alt={`${parentPost.author.displayName}'s avatar`}
+                        width={40}
+                        height={40}
+                        className="rounded-full w-10 h-10"
+                      />
+                      <div className="w-0.5 bg-border-primary flex-1 mt-2"></div>
                     </div>
-                    <div className="text-text-secondary">
-                      {(parentPost.record as AppBskyFeedPost.Record).text}
+                    <div className="flex flex-col flex-1 ml-3">
+                      <div className="flex flex-row gap-2">
+                        <div className="text-text-primary">
+                          {parentPost.author.displayName}
+                        </div>
+                        <div className="text-text-tertiary">
+                          @{parentPost.author.handle}
+                        </div>
+                      </div>
+                      <div className="text-text-secondary">
+                        {(parentPost.record as AppBskyFeedPost.Record).text}
+                      </div>
+                      <div className="flex items-center gap-1 mt-2 text-text-tertiary">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M3.875 10.5A6.125 6.125 0 0110 4.375h4a6.125 6.125 0 013.6 11.08l-5.939 4.315a.625.625 0 01-.978-.638l.542-2.507H10A6.125 6.125 0 013.875 10.5zm14.07-2.866A4.868 4.868 0 0014 5.625h-4a4.875 4.875 0 100 9.75h1.69c.558 0 .973.515.855 1.06l-.294 1.362 4.615-3.353a4.875 4.875 0 001.078-6.81z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        {parentPost.replyCount > 0 && (
+                          <span className="text-sm">
+                            {parentPost.replyCount}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
+            {/* Current Post */}
             <div className="px-6 pb-4">
               <div className="flex flex-col">
                 <div className="flex items-center">
@@ -199,8 +224,29 @@ export default function PostPage() {
                 <div className="text-text-tertiary text-sm mt-3">
                   {formattedDate}
                 </div>
+                <div className="flex items-center gap-1 mt-2 text-text-tertiary">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M3.875 10.5A6.125 6.125 0 0110 4.375h4a6.125 6.125 0 013.6 11.08l-5.939 4.315a.625.625 0 01-.978-.638l.542-2.507H10A6.125 6.125 0 013.875 10.5zm14.07-2.866A4.868 4.868 0 0014 5.625h-4a4.875 4.875 0 100 9.75h1.69c.558 0 .973.515.855 1.06l-.294 1.362 4.615-3.353a4.875 4.875 0 001.078-6.81z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  {post.replyCount > 0 && (
+                    <span className="text-sm">{post.replyCount}</span>
+                  )}
+                </div>
               </div>
             </div>
+            {/* Replies */}
             <div className="replies">
               {replies.map((reply) => (
                 <div
@@ -226,6 +272,28 @@ export default function PostPage() {
                       </div>
                       <div className="text-text-secondary">
                         {(reply.post.record as AppBskyFeedPost.Record).text}
+                      </div>
+                      <div className="flex items-center gap-1 mt-2 text-text-tertiary">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M3.875 10.5A6.125 6.125 0 0110 4.375h4a6.125 6.125 0 013.6 11.08l-5.939 4.315a.625.625 0 01-.978-.638l.542-2.507H10A6.125 6.125 0 013.875 10.5zm14.07-2.866A4.868 4.868 0 0014 5.625h-4a4.875 4.875 0 100 9.75h1.69c.558 0 .973.515.855 1.06l-.294 1.362 4.615-3.353a4.875 4.875 0 001.078-6.81z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        {reply.post.replyCount > 0 && (
+                          <span className="text-sm">
+                            {reply.post.replyCount}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
