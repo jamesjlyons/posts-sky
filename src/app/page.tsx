@@ -146,6 +146,11 @@ export default function Homepage() {
     ]
   );
 
+  const prefetchNextPage = useCallback(async () => {
+    const cursor = selectedFeed === "feed1" ? cursorFeed1 : cursorFeed2;
+    await fetchPosts(selectedFeed, cursor); // Next.js will automatically cache this
+  }, [selectedFeed, cursorFeed1, cursorFeed2, fetchPosts]);
+
   useEffect(() => {
     checkAuth();
   }, []);
