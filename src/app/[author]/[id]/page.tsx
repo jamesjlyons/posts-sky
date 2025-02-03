@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AppBskyFeedDefs } from "@atproto/api";
 import { agent, checkSession, login } from "../../../lib/api";
 import { MainLayout } from "../../../components/MainLayout";
@@ -10,6 +10,7 @@ import { PostItem } from "../../../components/PostItem";
 
 export default function PostPage() {
   const params = useParams();
+  const router = useRouter();
   const [post, setPost] = useState<AppBskyFeedDefs.PostView | null>(null);
   const [parentPost, setParentPost] = useState<AppBskyFeedDefs.PostView | null>(
     null
@@ -34,21 +35,59 @@ export default function PostPage() {
   };
 
   const fetchPost = useCallback(async () => {
+    const { author, id } = params;
+
     try {
-      const { author, id } = params;
-      // First resolve the handle
-      const resolveResponse = await agent.com.atproto.identity.resolveHandle({
-        handle: author as string,
-      });
+      // Start both requests in parallel
+      const [resolveResponse, threadResponse] = await Promise.all([
+        agent.com.atproto.identity
+          .resolveHandle({
+            handle: author as string,
+          })
+          .catch(() => null),
+        // Optimistically fetch thread using handle directly while DID resolves
+        agent.app.bsky.feed
+          .getPostThread({
+            uri: `at://${author}/app.bsky.feed.post/${id}`,
+            depth: 1,
+            parentHeight: 1,
+          })
+          .catch(() => null),
+      ]);
 
-      // Then get the thread using the resolved DID
-      const threadResponse = await agent.app.bsky.feed.getPostThread({
-        uri: `at://${resolveResponse.data.did}/app.bsky.feed.post/${id}`,
-        depth: 1,
-        parentHeight: 1,
-      });
+      // If optimistic fetch failed, try with resolved DID
+      if (!threadResponse && resolveResponse) {
+        const retryResponse = await agent.app.bsky.feed.getPostThread({
+          uri: `at://${resolveResponse.data.did}/app.bsky.feed.post/${id}`,
+          depth: 1,
+          parentHeight: 1,
+        });
 
-      if (threadResponse.data.thread.post) {
+        if (retryResponse.data.thread.post) {
+          setPost(retryResponse.data.thread.post as AppBskyFeedDefs.PostView);
+          if (
+            retryResponse.data.thread.parent &&
+            typeof retryResponse.data.thread.parent === "object" &&
+            "post" in
+              (retryResponse.data.thread.parent as Record<string, unknown>)
+          ) {
+            setParentPost(
+              (
+                retryResponse.data.thread.parent as {
+                  post: AppBskyFeedDefs.PostView;
+                }
+              ).post
+            );
+          }
+          if (retryResponse.data.thread.replies) {
+            setReplies(
+              retryResponse.data.thread
+                .replies as AppBskyFeedDefs.FeedViewPost[]
+            );
+          }
+        }
+      } else if (threadResponse?.data.thread.post) {
+        // Use successful optimistic response
         setPost(threadResponse.data.thread.post as AppBskyFeedDefs.PostView);
         if (
           threadResponse.data.thread.parent &&
