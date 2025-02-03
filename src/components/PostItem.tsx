@@ -109,7 +109,7 @@ export function PostItem({
           {timeDisplay && (
             <div className="text-text-tertiary text-sm mt-3">{timeDisplay}</div>
           )}
-          <div className="flex items-center gap-4 mt-2 text-text-tertiary">
+          <div className="flex items-center justify-between mt-4 text-text-tertiary">
             <div className="flex items-center gap-1">
               <svg
                 width="24"
@@ -220,7 +220,7 @@ export function PostItem({
             {showFullDate && timeDisplay && (
               <div className="text-text-tertiary mt-3">{timeDisplay}</div>
             )}
-            <div className="flex items-center gap-4 mt-2 text-text-tertiary">
+            <div className="flex items-center justify-between mt-4 text-text-tertiary">
               <div className="flex items-center gap-1">
                 <svg
                   width="24"
