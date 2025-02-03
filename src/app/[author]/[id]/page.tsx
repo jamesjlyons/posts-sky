@@ -36,29 +36,38 @@ export default function PostPage() {
   const fetchPost = useCallback(async () => {
     try {
       const { author, id } = params;
-      const { data: resolveData } =
-        await agent.com.atproto.identity.resolveHandle({
-          handle: author as string,
-        });
+      // First resolve the handle
+      const resolveResponse = await agent.com.atproto.identity.resolveHandle({
+        handle: author as string,
+      });
 
-      const postId = `at://${resolveData.did}/app.bsky.feed.post/${id}`;
-      const { data } = await agent.app.bsky.feed.getPostThread({
-        uri: postId,
+      // Then get the thread using the resolved DID
+      const threadResponse = await agent.app.bsky.feed.getPostThread({
+        uri: `at://${resolveResponse.data.did}/app.bsky.feed.post/${id}`,
         depth: 1,
         parentHeight: 1,
       });
 
-      if (data.thread.post) {
-        setPost(data.thread.post as AppBskyFeedDefs.PostView);
+      if (threadResponse.data.thread.post) {
+        setPost(threadResponse.data.thread.post as AppBskyFeedDefs.PostView);
         if (
-          data.thread.parent &&
-          typeof data.thread.parent === "object" &&
-          "post" in data.thread.parent
+          threadResponse.data.thread.parent &&
+          typeof threadResponse.data.thread.parent === "object" &&
+          "post" in
+            (threadResponse.data.thread.parent as Record<string, unknown>)
         ) {
-          setParentPost(data.thread.parent.post as AppBskyFeedDefs.PostView);
+          setParentPost(
+            (
+              threadResponse.data.thread.parent as {
+                post: AppBskyFeedDefs.PostView;
+              }
+            ).post
+          );
         }
-        if (data.thread.replies) {
-          setReplies(data.thread.replies as AppBskyFeedDefs.FeedViewPost[]);
+        if (threadResponse.data.thread.replies) {
+          setReplies(
+            threadResponse.data.thread.replies as AppBskyFeedDefs.FeedViewPost[]
+          );
         }
       }
     } catch (error) {

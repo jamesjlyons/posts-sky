@@ -60,22 +60,37 @@ export default function Homepage() {
     async (feedKey: "feed1" | "feed2", cursor?: string) => {
       if (!isAuthenticated) return { posts: [], cursor: undefined };
 
-      const { data } = await agent.app.bsky.feed.getFeed(
-        {
-          feed: feedUrls[feedKey],
-          limit: 30,
-          cursor,
+      const authHeader = await Promise.resolve(agent.session ?? null)
+        .then((res) => (res ? `Bearer ${res.accessJwt}` : null))
+        .catch(() => null);
+
+      if (!authHeader) return { posts: [], cursor: undefined };
+
+      const params = new URLSearchParams({
+        feed: feedUrls[feedKey],
+        ...(cursor && { cursor }),
+      });
+
+      const response = await fetch(`/api/posts?${params}`, {
+        headers: {
+          Authorization: authHeader,
         },
-        {
-          headers: {
-            "Accept-Language": "en-US",
-          },
-        }
-      );
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch posts");
+      }
+
+      const data = await response.json();
       return { posts: data.feed, cursor: data.cursor };
     },
     [isAuthenticated]
   );
+
+  const prefetchNextPage = useCallback(async () => {
+    const cursor = selectedFeed === "feed1" ? cursorFeed1 : cursorFeed2;
+    await fetchPosts(selectedFeed, cursor);
+  }, [selectedFeed, cursorFeed1, cursorFeed2, fetchPosts]);
 
   const loadMorePosts = useCallback(async () => {
     if (loadingMore) return;
@@ -113,6 +128,7 @@ export default function Homepage() {
       observerRef.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           loadMorePosts();
+          prefetchNextPage();
         }
       });
 
@@ -120,7 +136,7 @@ export default function Homepage() {
         observerRef.current.observe(node);
       }
     },
-    [loadingMore, loadMorePosts]
+    [loadingMore, loadMorePosts, prefetchNextPage]
   );
 
   const loadPosts = useCallback(
@@ -145,11 +161,6 @@ export default function Homepage() {
       setCursorFeed2,
     ]
   );
-
-  const prefetchNextPage = useCallback(async () => {
-    const cursor = selectedFeed === "feed1" ? cursorFeed1 : cursorFeed2;
-    await fetchPosts(selectedFeed, cursor); // Next.js will automatically cache this
-  }, [selectedFeed, cursorFeed1, cursorFeed2, fetchPosts]);
 
   useEffect(() => {
     checkAuth();
