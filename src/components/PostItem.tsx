@@ -74,6 +74,9 @@ export function PostItem({
                 width={40}
                 height={40}
                 className="rounded-full w-10 h-10"
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL={`data:image/svg+xml;base64,...`}
               />
               {showBottomLine && (
                 <div className="w-0.5 bg-border-primary flex-1 mt-2" />
@@ -101,6 +104,9 @@ export function PostItem({
                         : 600
                     }
                     className="w-full h-auto max-h-[600px] rounded-lg object-cover"
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL={`data:image/svg+xml;base64,...`}
                   />
                 )
               )}
@@ -180,6 +186,9 @@ export function PostItem({
               width={40}
               height={40}
               className="rounded-full w-10 h-10"
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL={`data:image/svg+xml;base64,...`}
             />
             {isThreadView && showBottomLine && (
               <div className="w-0.5 bg-border-primary flex-1 mt-2" />
@@ -211,6 +220,9 @@ export function PostItem({
                             : 600
                         }
                         className="w-full h-auto max-h-[600px] rounded-lg object-cover mt-2"
+                        loading="lazy"
+                        placeholder="blur"
+                        blurDataURL={`data:image/svg+xml;base64,...`}
                       />
                     )
                   )}
