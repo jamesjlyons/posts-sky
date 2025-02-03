@@ -2,20 +2,18 @@
 
 import { useCallback, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import {
-  AppBskyFeedDefs,
-  AppBskyFeedPost,
-  AppBskyEmbedImages,
-} from "@atproto/api";
+import { AppBskyFeedDefs } from "@atproto/api";
 import { agent, checkSession, login } from "../../../lib/api";
 import { MainLayout } from "../../../components/MainLayout";
 import { LoginDialog } from "../../../components/LoginDialog";
-import Image from "next/image";
-import { format } from "date-fns";
+import { PostItem } from "../../../components/PostItem";
 
 export default function PostPage() {
   const params = useParams();
   const [post, setPost] = useState<AppBskyFeedDefs.PostView | null>(null);
+  const [parentPost, setParentPost] = useState<AppBskyFeedDefs.PostView | null>(
+    null
+  );
   const [replies, setReplies] = useState<AppBskyFeedDefs.FeedViewPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,10 +45,18 @@ export default function PostPage() {
       const { data } = await agent.app.bsky.feed.getPostThread({
         uri: postId,
         depth: 1,
+        parentHeight: 1,
       });
 
       if (data.thread.post) {
         setPost(data.thread.post as AppBskyFeedDefs.PostView);
+        if (
+          data.thread.parent &&
+          typeof data.thread.parent === "object" &&
+          "post" in data.thread.parent
+        ) {
+          setParentPost(data.thread.parent.post as AppBskyFeedDefs.PostView);
+        }
         if (data.thread.replies) {
           setReplies(data.thread.replies as AppBskyFeedDefs.FeedViewPost[]);
         }
@@ -84,9 +90,6 @@ export default function PostPage() {
     return <MainLayout mainContent={<div>Post not found</div>} />;
   }
 
-  const record = post.record as AppBskyFeedPost.Record;
-  const formattedDate = format(new Date(record.createdAt), "MMM d 'at' h:mm a");
-
   return (
     <>
       <LoginDialog
@@ -112,97 +115,59 @@ export default function PostPage() {
                 aria-label="Go back"
               >
                 <svg
-                  width="20"
-                  height="20"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
-                    fill="currentColor"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12.3258 6.05806C12.5699 6.30214 12.5699 6.69786 12.3258 6.94194L7.26777 12L12.3258 17.0581C12.5699 17.3021 12.5699 17.6979 12.3258 17.9419C12.0817 18.186 11.686 18.186 11.4419 17.9419L5.5 12L11.4419 6.05806C11.686 5.81398 12.0817 5.81398 12.3258 6.05806Z"
+                    fill="var(--grey1)"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M6.75888 12C6.75888 11.6548 7.0387 11.375 7.38388 11.375H17.8839C18.2291 11.375 18.5 11.6548 18.5 12C18.5 12.3452 18.2291 12.625 17.8839 12.625H7.38388C7.0387 12.625 6.75888 12.3452 6.75888 12Z"
+                    fill="var(--grey1)"
                   />
                 </svg>
                 Thread
               </li>
             </ul>
-            <div className="border-b border-border-primary px-6 pt-5 pb-4">
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2 mb-3">
-                  <Image
-                    src={post.author.avatar || "/default-avatar.png"}
-                    alt={`${post.author.displayName}'s avatar`}
-                    width={40}
-                    height={40}
-                    className="rounded-full w-10 h-10"
-                  />
-                  <div className="flex flex-col">
-                    <div className="text-text-primary">
-                      {post.author.displayName}
-                    </div>
-                    <div className="text-text-tertiary">
-                      @{post.author.handle}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-text-secondary text-xl mb-3">
-                  {record.text}
-                </div>
-                {post.embed?.$type === "app.bsky.embed.images#view" && (
-                  <div className="media-container grid gap-2">
-                    {(post.embed as AppBskyEmbedImages.View).images.map(
-                      (image, imageIndex) => (
-                        <Image
-                          key={`image-${imageIndex}`}
-                          src={image.fullsize || "/default-post-image.png"}
-                          alt={image.alt || "Post media"}
-                          width={600}
-                          height={
-                            image.aspectRatio
-                              ? (600 / image.aspectRatio.width) *
-                                image.aspectRatio.height
-                              : 600
-                          }
-                          className="w-full h-auto max-h-[600px] rounded-lg object-cover"
-                        />
-                      )
-                    )}
-                  </div>
-                )}
-                <div className="text-text-tertiary text-sm mt-3">
-                  {formattedDate}
-                </div>
-              </div>
-            </div>
+            {/* Parent Post (if exists) */}
+            {parentPost && (
+              <PostItem
+                post={parentPost}
+                showTimeAgo={false}
+                isThreadView={true}
+                showBottomLine={true}
+              />
+            )}
+            {/* Current Post */}
+            <PostItem
+              post={post}
+              isClickable={false}
+              showTimeAgo={false}
+              showFullDate={true}
+              showBorder={false}
+              isThreadView={true}
+              showTopLine={!!parentPost}
+              showBottomLine={replies.length > 0}
+            />
+            {/* Replies */}
             <div className="replies">
-              {replies.map((reply) => (
-                <div
+              {replies.map((reply, index) => (
+                <PostItem
                   key={reply.post.cid}
-                  className="border-b border-border-primary px-6 pt-5 pb-4"
-                >
-                  <div className="flex mb-2">
-                    <Image
-                      src={reply.post.author.avatar || "/default-avatar.png"}
-                      alt={`${reply.post.author.displayName}'s avatar`}
-                      width={40}
-                      height={40}
-                      className="rounded-full mr-3 w-10 h-10"
-                    />
-                    <div className="flex flex-col">
-                      <div className="flex flex-row gap-2">
-                        <div className="text-text-primary">
-                          {reply.post.author.displayName}
-                        </div>
-                        <div className="text-text-tertiary">
-                          @{reply.post.author.handle}
-                        </div>
-                      </div>
-                      <div className="text-text-secondary">
-                        {(reply.post.record as AppBskyFeedPost.Record).text}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  post={reply.post}
+                  showTimeAgo={false}
+                  isThreadView={true}
+                  showTopLine={true}
+                  showBottomLine={index !== replies.length - 1}
+                />
               ))}
             </div>
           </div>
