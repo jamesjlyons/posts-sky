@@ -10,7 +10,6 @@ import { PostItem } from "../../../components/PostItem";
 
 export default function PostPage() {
   const params = useParams();
-  const router = useRouter();
   const [post, setPost] = useState<AppBskyFeedDefs.PostView | null>(null);
   const [parentPost, setParentPost] = useState<AppBskyFeedDefs.PostView | null>(
     null
