@@ -1,12 +1,11 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
+import { useParams } from "next/navigation";
+import { AppBskyFeedDefs } from "@atproto/api";
 import { agent, checkSession, login } from "../../../lib/api";
 import { MainLayout } from "../../../components/MainLayout";
 import { LoginDialog } from "../../../components/LoginDialog";
-import { format } from "date-fns";
 import { PostItem } from "../../../components/PostItem";
 
 export default function PostPage() {
@@ -90,9 +89,6 @@ export default function PostPage() {
   if (!post) {
     return <MainLayout mainContent={<div>Post not found</div>} />;
   }
-
-  const record = post.record as AppBskyFeedPost.Record;
-  const formattedDate = format(new Date(record.createdAt), "MMM d 'at' h:mm a");
 
   return (
     <>

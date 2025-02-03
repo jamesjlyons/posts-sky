@@ -4,12 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { agent, login, checkSession, logout } from "~/lib/api";
 import { LoginDialog } from "../components/LoginDialog";
-import type {
-  AppBskyFeedDefs,
-  AppBskyFeedPost,
-  AppBskyEmbedImages,
-} from "@atproto/api";
-import Image from "next/image";
+import type { AppBskyFeedDefs } from "@atproto/api";
 import { MainLayout } from "../components/MainLayout";
 import { useRouter } from "next/navigation";
 import { PostItem } from "../components/PostItem";
@@ -36,7 +31,6 @@ export default function Homepage() {
   const [cursorFeed2, setCursorFeed2] = useState<string | undefined>();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
 
   // const { feed: postsArray, cursor: nextPage } = data;
 
