@@ -25,7 +25,7 @@ export function MainLayout({
     <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] max-[800px]:grid-cols-[60px_1fr] w-full max-w-[calc(300px+604px+300px)] max-[800px]:max-w-none mx-auto min-h-screen">
       <div className="flex flex-col items-end">
         <nav
-          className="flex flex-col sticky top-4"
+          className="flex flex-col sticky top-0"
           aria-label="Main navigation"
         >
           <Link
