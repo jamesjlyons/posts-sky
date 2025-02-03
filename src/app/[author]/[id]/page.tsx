@@ -6,13 +6,11 @@ import { AppBskyFeedDefs, AppBskyFeedPost } from "@atproto/api";
 import { agent, checkSession, login } from "../../../lib/api";
 import { MainLayout } from "../../../components/MainLayout";
 import { LoginDialog } from "../../../components/LoginDialog";
-import Image from "next/image";
 import { format } from "date-fns";
 import { PostItem } from "../../../components/PostItem";
 
 export default function PostPage() {
   const params = useParams();
-  const router = useRouter();
   const [post, setPost] = useState<AppBskyFeedDefs.PostView | null>(null);
   const [parentPost, setParentPost] = useState<AppBskyFeedDefs.PostView | null>(
     null
@@ -156,7 +154,8 @@ export default function PostPage() {
             <PostItem
               post={post}
               isClickable={false}
-              showTimeAgo={true}
+              showTimeAgo={false}
+              showFullDate={true}
               showBorder={false}
               isThreadView={true}
               showTopLine={!!parentPost}

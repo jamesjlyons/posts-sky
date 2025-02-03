@@ -7,7 +7,7 @@ import {
   AppBskyFeedPost,
   AppBskyEmbedImages,
 } from "@atproto/api";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 
 interface PostItemProps {
   post: AppBskyFeedDefs.PostView;
@@ -17,6 +17,7 @@ interface PostItemProps {
   isThreadView?: boolean;
   showTopLine?: boolean;
   showBottomLine?: boolean;
+  showFullDate?: boolean;
   ref?: ((node: HTMLElement | null) => void) | null;
 }
 
@@ -28,6 +29,7 @@ export function PostItem({
   isThreadView = false,
   showTopLine = false,
   showBottomLine = false,
+  showFullDate = false,
   ref,
 }: PostItemProps) {
   const router = useRouter();
@@ -36,6 +38,10 @@ export function PostItem({
   const timeAgo = showTimeAgo
     ? formatDistanceToNow(new Date(record.createdAt), { addSuffix: true })
     : null;
+
+  const timeDisplay = showFullDate
+    ? format(new Date(record.createdAt), "MMM d 'at' h:mm a")
+    : timeAgo;
 
   const handleClick = () => {
     if (!isClickable) return;
@@ -73,7 +79,9 @@ export function PostItem({
           <div className="flex flex-row gap-2">
             <div className="text-text-primary">{author.displayName}</div>
             <div className="text-text-tertiary">@{author.handle}</div>
-            {timeAgo && <div className="text-text-tertiary">{timeAgo}</div>}
+            {!showFullDate && timeDisplay && (
+              <div className="text-text-tertiary">{timeDisplay}</div>
+            )}
           </div>
           <div className="text-text-secondary">
             {record.text}
@@ -99,6 +107,9 @@ export function PostItem({
               </div>
             )}
           </div>
+          {showFullDate && timeDisplay && (
+            <div className="text-text-tertiary mt-3">{timeDisplay}</div>
+          )}
           <div className="flex items-center gap-1 mt-2 text-text-tertiary">
             <svg
               width="24"
