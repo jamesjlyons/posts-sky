@@ -10,9 +10,9 @@ import { PostItem } from "../components/PostItem";
 
 const feedUrls = {
   feed1:
-    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
-  feed2:
     "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
+  feed2:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
 } as const;
 
 export default function Homepage() {
@@ -185,7 +185,7 @@ export default function Homepage() {
                 }`}
                 onClick={() => setSelectedFeed("feed1")}
               >
-                Posts.cv Alumni
+                Posts
               </li>
               <li
                 className={`text-text-primary cursor-pointer ${
@@ -195,7 +195,7 @@ export default function Homepage() {
                 }`}
                 onClick={() => setSelectedFeed("feed2")}
               >
-                Posts.cv (Posts Only)
+                Everything
               </li>
             </ul>
             <ul className="feedPosts">
