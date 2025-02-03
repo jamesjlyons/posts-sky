@@ -22,10 +22,10 @@ export function MainLayout({
   console.log("Current pathname:", pathname);
 
   return (
-    <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] w-full max-w-[calc(300px+604px+300px)] mx-auto min-h-screen">
+    <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] max-[800px]:grid-cols-[60px_1fr] w-full max-w-[calc(300px+604px+300px)] max-[800px]:max-w-none mx-auto min-h-screen">
       <div className="flex flex-col items-end">
         <nav
-          className="flex flex-col sticky top-0"
+          className="flex flex-col sticky top-4"
           aria-label="Main navigation"
         >
           <Link
@@ -98,7 +98,7 @@ export function MainLayout({
         </div> */}
       </div>
       <div className="feed border-x border-border-primary">{mainContent}</div>
-      <div className="p-6">
+      <div className="p-6 max-[800px]:hidden">
         <p>PostsSky</p>
         <p className="text-text-tertiary text-xs">
           An ode to the community app by Read.cv
