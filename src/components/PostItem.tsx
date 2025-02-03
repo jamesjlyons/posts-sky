@@ -139,6 +139,23 @@ export function PostItem({
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
+                  d="M12 5.625a6.352 6.352 0 00-4.462 1.821.625.625 0 01-.874-.892A7.626 7.626 0 0119.56 11H21a.5.5 0 01.4.8l-2 2.667a.5.5 0 01-.8 0l-2-2.667a.5.5 0 01.4-.8h1.297A6.377 6.377 0 0012 5.625zM3 13h1.44a7.627 7.627 0 0012.896 4.446.625.625 0 10-.874-.892A6.377 6.377 0 015.703 13H7a.5.5 0 00.4-.8l-2-2.667a.5.5 0 00-.8 0l-2 2.667a.5.5 0 00.4.8z"
+                  fill="currentColor"
+                />
+              </svg>
+              {post.repostCount && post.repostCount > 0 && (
+                <span className="text-sm">{post.repostCount}</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
                   fillRule="evenodd"
                   clipRule="evenodd"
                   d="M11.358 19.073L12 18l.642 1.073a1.25 1.25 0 01-1.284 0zM12 18s6.75-4.04 6.75-8.25C18.75 7.625 17.125 6 15 6c-1.145 0-2.126.656-2.756 1.591a.3.3 0 01-.488 0C11.126 6.656 10.145 6 9 6 6.875 6 5.25 7.625 5.25 9.75 5.25 13.96 12 18 12 18zm0-12.035c-.781-.722-1.807-1.215-3-1.215-2.815 0-5 2.185-5 5 0 1.383.55 2.663 1.258 3.747.71 1.091 1.637 2.072 2.525 2.88a25.19 25.19 0 003.548 2.679l.018.011.006.004.003.002L12 18l.642 1.073.003-.002.006-.004.018-.011.065-.04a24.1 24.1 0 001.04-.69 25.192 25.192 0 002.443-1.948c.888-.81 1.814-1.79 2.526-2.88C19.448 12.412 20 11.132 20 9.75c0-2.815-2.185-5-5-5-1.193 0-2.219.493-3 1.215z"
@@ -222,6 +239,23 @@ export function PostItem({
                 </svg>
                 {post.replyCount && post.replyCount > 0 && (
                   <span className="text-sm">{post.replyCount}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 5.625a6.352 6.352 0 00-4.462 1.821.625.625 0 01-.874-.892A7.626 7.626 0 0119.56 11H21a.5.5 0 01.4.8l-2 2.667a.5.5 0 01-.8 0l-2-2.667a.5.5 0 01.4-.8h1.297A6.377 6.377 0 0012 5.625zM3 13h1.44a7.627 7.627 0 0012.896 4.446.625.625 0 10-.874-.892A6.377 6.377 0 015.703 13H7a.5.5 0 00.4-.8l-2-2.667a.5.5 0 00-.8 0l-2 2.667a.5.5 0 00.4.8z"
+                    fill="currentColor"
+                  />
+                </svg>
+                {post.repostCount && post.repostCount > 0 && (
+                  <span className="text-sm">{post.repostCount}</span>
                 )}
               </div>
               <div className="flex items-center gap-1">
