@@ -6,7 +6,6 @@ import { agent, login, checkSession, logout } from "~/lib/api";
 import { LoginDialog } from "../components/LoginDialog";
 import type { AppBskyFeedDefs } from "@atproto/api";
 import { MainLayout } from "../components/MainLayout";
-import { useRouter } from "next/navigation";
 import { PostItem } from "../components/PostItem";
 
 const feedUrls = {
