@@ -53,6 +53,14 @@ export function PostItem({
     router.push(`/${authorHandle}/${postId}`);
   };
 
+  const handleMouseEnter = () => {
+    if (!isClickable) return;
+    const uriParts = post.uri.split("/");
+    const postId = uriParts[uriParts.length - 1];
+    const authorHandle = post.author.handle;
+    router.prefetch(`/${authorHandle}/${postId}`);
+  };
+
   return (
     <div
       ref={ref}
@@ -60,6 +68,7 @@ export function PostItem({
         showBorder ? "border-b border-border-primary" : ""
       }`}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
     >
       {isMainThreadPost ? (
         <div className="flex flex-col">
