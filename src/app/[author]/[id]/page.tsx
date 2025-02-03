@@ -156,6 +156,7 @@ export default function PostPage() {
               isThreadView={true}
               showTopLine={!!parentPost}
               showBottomLine={replies.length > 0}
+              isMainThreadPost={true}
             />
             {/* Replies */}
             <div className="replies">
