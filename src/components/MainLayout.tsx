@@ -24,7 +24,10 @@ export function MainLayout({
   return (
     <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] w-full max-w-[calc(300px+604px+300px)] mx-auto min-h-screen">
       <div className="flex flex-col items-end">
-        <nav className="flex flex-col" aria-label="Main navigation">
+        <nav
+          className="flex flex-col sticky top-0"
+          aria-label="Main navigation"
+        >
           <Link
             href="/"
             className="w-15 h-15 flex items-center justify-center rounded-full hover:bg-hover transition-colors"
