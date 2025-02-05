@@ -8,6 +8,7 @@ import {
   AppBskyEmbedImages,
 } from "@atproto/api";
 import { formatDistanceToNow, format } from "date-fns";
+import Link from "next/link";
 
 interface PostItemProps {
   post: AppBskyFeedDefs.PostView;
@@ -68,25 +69,37 @@ export function PostItem({
               {showTopLine && (
                 <div className="w-0.5 bg-border-primary flex-1 mb-2" />
               )}
-              <Image
-                src={author.avatar || "/default-avatar.png"}
-                alt={`${author.displayName}'s avatar`}
-                width={40}
-                height={40}
-                className="rounded-full w-10 h-10"
-              />
+              <Link
+                href={`/${author.handle}`}
+                onClick={(e) => e.stopPropagation()}
+                className="cursor-pointer"
+              >
+                <Image
+                  src={author.avatar || "/default-avatar.png"}
+                  alt={`${author.displayName}'s avatar`}
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full"
+                />
+              </Link>
               {showBottomLine && (
                 <div className="w-0.5 bg-border-primary flex-1 mt-2" />
               )}
             </div>
             <div className="flex flex-col">
-              <div className="text-text-primary">{author.displayName}</div>
+              <Link
+                href={`/${author.handle}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-text-primary hover:text-text-primary hover:underline"
+              >
+                {author.displayName}
+              </Link>
               <div className="text-text-tertiary">@{author.handle}</div>
             </div>
           </div>
-          <div className="text-text-secondary text-xl mb-3">{record.text}</div>
+          <div className="mb-3 text-xl text-text-secondary">{record.text}</div>
           {post.embed?.$type === "app.bsky.embed.images#view" && (
-            <div className="media-container grid gap-2">
+            <div className="grid gap-2 media-container">
               {(post.embed as AppBskyEmbedImages.View).images.map(
                 (image, imageIndex) => (
                   <Image
@@ -107,7 +120,7 @@ export function PostItem({
             </div>
           )}
           {timeDisplay && (
-            <div className="text-text-tertiary text-sm mt-3">{timeDisplay}</div>
+            <div className="mt-3 text-sm text-text-tertiary">{timeDisplay}</div>
           )}
           <div className="flex items-center justify-between mt-4 text-text-tertiary">
             <div className="flex items-center gap-1">
@@ -174,20 +187,32 @@ export function PostItem({
             {isThreadView && showTopLine && (
               <div className="w-0.5 bg-border-primary flex-1 mb-2" />
             )}
-            <Image
-              src={author.avatar || "/default-avatar.png"}
-              alt={`${author.displayName}'s avatar`}
-              width={40}
-              height={40}
-              className="rounded-full w-10 h-10"
-            />
+            <Link
+              href={`/${author.handle}`}
+              onClick={(e) => e.stopPropagation()}
+              className="cursor-pointer"
+            >
+              <Image
+                src={author.avatar || "/default-avatar.png"}
+                alt={`${author.displayName}'s avatar`}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full"
+              />
+            </Link>
             {isThreadView && showBottomLine && (
               <div className="w-0.5 bg-border-primary flex-1 mt-2" />
             )}
           </div>
           <div className="flex flex-col flex-1 ml-3">
             <div className="flex flex-row gap-2">
-              <div className="text-text-primary">{author.displayName}</div>
+              <Link
+                href={`/${author.handle}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-text-primary hover:text-text-primary hover:underline"
+              >
+                {author.displayName}
+              </Link>
               <div className="text-text-tertiary">@{author.handle}</div>
               {!showFullDate && timeDisplay && (
                 <div className="text-text-tertiary">{timeDisplay}</div>
@@ -196,7 +221,7 @@ export function PostItem({
             <div className="text-text-secondary">
               {record.text}
               {post.embed?.$type === "app.bsky.embed.images#view" && (
-                <div className="media-container mt-2 grid gap-2">
+                <div className="grid gap-2 mt-2 media-container">
                   {(post.embed as AppBskyEmbedImages.View).images.map(
                     (image, imageIndex) => (
                       <Image
@@ -218,7 +243,7 @@ export function PostItem({
               )}
             </div>
             {showFullDate && timeDisplay && (
-              <div className="text-text-tertiary mt-3">{timeDisplay}</div>
+              <div className="mt-3 text-text-tertiary">{timeDisplay}</div>
             )}
             <div className="flex items-center justify-between mt-4 text-text-tertiary">
               <div className="flex items-center gap-1">
