@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import Link from "next/link";
-// import Image from "next/image";
+import Image from "next/image";
+import { AppBskyActorDefs } from "@atproto/api";
+import { agent } from "../lib/api";
 
 interface MainLayoutProps {
   mainContent: React.ReactNode;
@@ -18,8 +20,19 @@ export function MainLayout({
 }: MainLayoutProps) {
   const pathname = usePathname();
   const segment = useSelectedLayoutSegment();
+  const [profile, setProfile] =
+    useState<AppBskyActorDefs.ProfileViewDetailed | null>(null);
 
   console.log("Current pathname:", pathname);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      agent
+        .getProfile({ actor: agent.session?.handle as string })
+        .then(({ data }) => setProfile(data))
+        .catch(console.error);
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] max-[800px]:grid-cols-[60px_1fr] w-full max-w-[calc(300px+604px+300px)] max-[800px]:max-w-none mx-auto min-h-screen">
@@ -78,6 +91,22 @@ export function MainLayout({
               />
             </svg>
           </Link>
+          {profile && (
+            <Link
+              href={`/${profile.handle}`}
+              className="w-15 h-15 flex items-center justify-center rounded-full hover:bg-hover transition-colors mt-auto"
+              aria-label="Your profile"
+              role="menuitem"
+            >
+              <Image
+                src={profile.avatar || "/default-avatar.png"}
+                alt="Your profile"
+                width={28}
+                height={28}
+                className="rounded-full"
+              />
+            </Link>
+          )}
         </nav>
         {/* posts-supporter-heart */}
         {/* <div className="bg-posts-yellow-wash rounded-4xl place-items-center p-1">
