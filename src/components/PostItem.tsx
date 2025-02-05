@@ -90,7 +90,7 @@ export function PostItem({
               <Link
                 href={`/${author.handle}`}
                 onClick={(e) => e.stopPropagation()}
-                className="text-text-primary hover:text-text-primary hover:underline"
+                className="text-text-primary hover:text-text-primary hover:underline whitespace-nowrap"
               >
                 {author.displayName}
               </Link>
@@ -209,7 +209,7 @@ export function PostItem({
               <Link
                 href={`/${author.handle}`}
                 onClick={(e) => e.stopPropagation()}
-                className="text-text-primary hover:text-text-primary hover:underline"
+                className="text-text-primary hover:text-text-primary hover:underline whitespace-nowrap"
               >
                 {author.displayName}
               </Link>
