@@ -38,12 +38,12 @@ export function MainLayout({
     <div className="grid grid-cols-[minmax(60px,_300px)_604px_300px] max-[800px]:grid-cols-[60px_1fr] w-full max-w-[calc(300px+604px+300px)] max-[800px]:max-w-none mx-auto min-h-screen">
       <div className="flex flex-col items-end">
         <nav
-          className="flex flex-col sticky top-0"
+          className="sticky top-0 flex flex-col"
           aria-label="Main navigation"
         >
           <Link
             href="/"
-            className="w-15 h-15 flex items-center justify-center rounded-full hover:bg-hover transition-colors"
+            className="flex items-center justify-center transition-colors rounded-full w-15 h-15 hover:bg-hover"
             aria-label="Home"
             role="menuitem"
           >
@@ -67,7 +67,7 @@ export function MainLayout({
           </Link>
           <Link
             href="/notifications"
-            className="w-15 h-15 flex items-center justify-center rounded-full hover:bg-hover transition-colors"
+            className="flex items-center justify-center transition-colors rounded-full w-15 h-15 hover:bg-hover"
             aria-label="Notifications"
             role="menuitem"
           >
@@ -94,7 +94,7 @@ export function MainLayout({
           {profile && (
             <Link
               href={`/${profile.handle}`}
-              className="w-15 h-15 flex items-center justify-center rounded-full hover:bg-hover transition-colors mt-auto"
+              className="flex items-center justify-center mt-auto transition-colors rounded-full w-15 h-15 hover:bg-hover"
               aria-label="Your profile"
               role="menuitem"
             >
@@ -109,7 +109,7 @@ export function MainLayout({
           )}
         </nav>
         {/* posts-supporter-heart */}
-        {/* <div className="bg-posts-yellow-wash rounded-4xl place-items-center p-1">
+        {/* <div className="p-1 bg-posts-yellow-wash rounded-4xl place-items-center">
           <svg
             width="16"
             height="16"
@@ -129,7 +129,7 @@ export function MainLayout({
       <div className="feed border-x border-border-primary">{mainContent}</div>
       <div className="p-6 max-[800px]:hidden">
         <p>PostsSky</p>
-        <p className="text-text-tertiary text-xs">
+        <p className="text-xs text-text-tertiary">
           An ode to the community app by Read.cv
         </p>
         {isAuthenticated && onLogout && (
