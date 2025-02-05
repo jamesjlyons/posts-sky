@@ -9,6 +9,7 @@ import { MainLayout } from "../../components/MainLayout";
 import { LoginDialog } from "../../components/LoginDialog";
 import { PostItem } from "../../components/PostItem";
 
+// SVG props for the back arrow icon in the header
 const backArrowSvgProps = {
   width: "24",
   height: "24",
@@ -34,14 +35,21 @@ const backArrowSvgProps = {
 };
 
 export default function ProfilePage() {
+  // URL parameters
   const params = useParams();
+
+  // State management
   const [profile, setProfile] =
     useState<AppBskyActorDefs.ProfileViewDetailed | null>(null);
   const [posts, setPosts] = useState<AppBskyFeedDefs.FeedViewPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [selectedFeed, setSelectedFeed] = useState<
+    "posts" | "replies" | "media"
+  >("posts");
 
+  // Handle user login
   const handleLogin = async (credentials: {
     identifier: string;
     password: string;
@@ -56,26 +64,60 @@ export default function ProfilePage() {
     }
   };
 
+  // Fetch profile data and posts
   const fetchProfile = useCallback(async () => {
     try {
+      // Resolve the handle to a DID
       const { data: resolveData } =
         await agent.com.atproto.identity.resolveHandle({
           handle: params.author as string,
         });
 
+      // Fetch both profile and feed data in parallel
       const [profileData, feedData] = await Promise.all([
         agent.getProfile({ actor: resolveData.did }),
         agent.getAuthorFeed({ actor: resolveData.did, limit: 30 }),
       ]);
 
       setProfile(profileData.data);
-      setPosts(feedData.data.feed);
+      const allPosts = feedData.data.feed;
+
+      // Filter posts based on selected feed type
+      switch (selectedFeed) {
+        case "replies":
+          setPosts(
+            allPosts.filter(
+              (item) => "reply" in item.post.record && item.post.record.reply
+            )
+          );
+          break;
+        case "media":
+          setPosts(
+            allPosts.filter(
+              (item) =>
+                item.post.embed?.images?.length ||
+                item.post.embed?.media?.images?.length
+            )
+          );
+          break;
+        case "posts":
+          setPosts(
+            allPosts.filter(
+              (item) =>
+                !("reply" in item.post.record) || !item.post.record.reply
+            )
+          );
+          break;
+        default:
+          setPosts(allPosts);
+      }
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
     setIsLoading(false);
-  }, [params.author]);
+  }, [params.author, selectedFeed]);
 
+  // Check authentication on mount and fetch profile data
   useEffect(() => {
     const init = async () => {
       const sessionCheck = await checkSession();
@@ -91,6 +133,7 @@ export default function ProfilePage() {
     init();
   }, [fetchProfile]);
 
+  // Loading and error states
   if (isLoading) {
     return <MainLayout mainContent={<div>Loading...</div>} />;
   }
@@ -101,11 +144,13 @@ export default function ProfilePage() {
 
   return (
     <>
+      {/* Login Dialog */}
       <LoginDialog
         isOpen={showLoginDialog}
         onClose={() => setShowLoginDialog(false)}
         onLogin={handleLogin}
       />
+
       <MainLayout
         isAuthenticated={isAuthenticated}
         onLogout={() => {
@@ -114,9 +159,10 @@ export default function ProfilePage() {
         }}
         mainContent={
           <div className="flex flex-col">
+            {/* Header with back button */}
             <ul className="feedlist text-text-secondary font-medium list-none tap-highlight-color-[rgba(0,0,0,0)] font-smoothing-antialiased m-0 box-border h-15 shadow-[0_1px_0_var(--transparentBorder)] flex flex-row px-6 items-center w-full sticky top-0 bg-[var(--backgroundColor)] z-10 gap-6">
               <li
-                className="text-text-primary cursor-pointer flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer text-text-primary"
                 onClick={() => window.history.back()}
                 role="button"
                 tabIndex={0}
@@ -129,7 +175,7 @@ export default function ProfilePage() {
             </ul>
 
             {/* Profile Header */}
-            <div className="px-6 py-4 border-b border-border-primary">
+            <div className="px-6 py-4">
               <div className="flex items-center gap-4">
                 <Image
                   src={profile.avatar || "/default-avatar.png"}
@@ -149,6 +195,28 @@ export default function ProfilePage() {
                 </p>
               )}
             </div>
+
+            {/* Feed Type Selector */}
+            <ul className="flex w-full border-b border-border-primary">
+              {["posts", "replies", "media"].map((feedType) => (
+                <li
+                  key={feedType}
+                  className={`flex-1 text-center cursor-pointer py-3 relative ${
+                    selectedFeed === feedType
+                      ? "text-text-primary"
+                      : "text-text-secondary"
+                  }`}
+                  onClick={() =>
+                    setSelectedFeed(feedType as typeof selectedFeed)
+                  }
+                >
+                  {feedType.charAt(0).toUpperCase() + feedType.slice(1)}
+                  {selectedFeed === feedType && (
+                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-text-primary" />
+                  )}
+                </li>
+              ))}
+            </ul>
 
             {/* Posts Feed */}
             <div className="posts">
