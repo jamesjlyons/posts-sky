@@ -197,11 +197,25 @@ export default function ProfilePage() {
             </div>
 
             {/* Feed Type Selector */}
-            <ul className="flex w-full border-b border-border-primary">
+            <ul className="relative flex w-full border-b border-border-primary">
+              {/* Add indicator line that slides */}
+              <div
+                className="absolute bottom-0 h-[1px] bg-text-primary transition-transform duration-200 ease-in-out w-1/3"
+                style={{
+                  transform: `translateX(${
+                    selectedFeed === "posts"
+                      ? 0
+                      : selectedFeed === "replies"
+                      ? 100
+                      : 200
+                  }%)`,
+                }}
+              />
+
               {["posts", "replies", "media"].map((feedType) => (
                 <li
                   key={feedType}
-                  className={`flex-1 text-center cursor-pointer py-3 relative ${
+                  className={`flex-1 text-center cursor-pointer py-3 ${
                     selectedFeed === feedType
                       ? "text-text-primary"
                       : "text-text-secondary"
@@ -211,9 +225,6 @@ export default function ProfilePage() {
                   }
                 >
                   {feedType.charAt(0).toUpperCase() + feedType.slice(1)}
-                  {selectedFeed === feedType && (
-                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-text-primary" />
-                  )}
                 </li>
               ))}
             </ul>
