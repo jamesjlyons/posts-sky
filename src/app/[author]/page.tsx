@@ -93,11 +93,19 @@ export default function ProfilePage() {
           break;
         case "media":
           setPosts(
-            allPosts.filter(
-              (item) =>
-                item.post.embed?.images?.length ||
-                item.post.embed?.media?.images?.length
-            )
+            allPosts.filter((item) => {
+              const embed = item.post.embed as {
+                images?: { alt?: string; image: string }[];
+                media?: { images?: { alt?: string; image: string }[] };
+              } | null;
+              return (
+                embed &&
+                ((Array.isArray(embed.images) && embed.images.length > 0) ||
+                  (embed.media &&
+                    Array.isArray(embed.media.images) &&
+                    embed.media.images.length > 0))
+              );
+            })
           );
           break;
         case "posts":
