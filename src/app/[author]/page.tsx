@@ -51,6 +51,39 @@ export default function ProfilePage() {
   const [cursor, setCursor] = useState<string | undefined>();
   const [loadingMore, setLoadingMore] = useState(false);
 
+  // Add helper function to filter posts
+  const filterPosts = useCallback(
+    (posts: AppBskyFeedDefs.FeedViewPost[]) => {
+      switch (selectedFeed) {
+        case "replies":
+          return posts.filter(
+            (item) => "reply" in item.post.record && item.post.record.reply
+          );
+        case "media":
+          return posts.filter((item) => {
+            const embed = item.post.embed as {
+              images?: { alt?: string; image: string }[];
+              media?: { images?: { alt?: string; image: string }[] };
+            } | null;
+            return (
+              embed &&
+              ((Array.isArray(embed.images) && embed.images.length > 0) ||
+                (embed.media &&
+                  Array.isArray(embed.media.images) &&
+                  embed.media.images.length > 0))
+            );
+          });
+        case "posts":
+          return posts.filter(
+            (item) => !("reply" in item.post.record) || !item.post.record.reply
+          );
+        default:
+          return posts;
+      }
+    },
+    [selectedFeed]
+  );
+
   // Handle user login
   const handleLogin = async (credentials: {
     identifier: string;
@@ -114,40 +147,7 @@ export default function ProfilePage() {
       setIsLoading(false);
       setLoadingMore(false);
     },
-    [params.author, selectedFeed]
-  );
-
-  // Add helper function to filter posts
-  const filterPosts = useCallback(
-    (posts: AppBskyFeedDefs.FeedViewPost[]) => {
-      switch (selectedFeed) {
-        case "replies":
-          return posts.filter(
-            (item) => "reply" in item.post.record && item.post.record.reply
-          );
-        case "media":
-          return posts.filter((item) => {
-            const embed = item.post.embed as {
-              images?: { alt?: string; image: string }[];
-              media?: { images?: { alt?: string; image: string }[] };
-            } | null;
-            return (
-              embed &&
-              ((Array.isArray(embed.images) && embed.images.length > 0) ||
-                (embed.media &&
-                  Array.isArray(embed.media.images) &&
-                  embed.media.images.length > 0))
-            );
-          });
-        case "posts":
-          return posts.filter(
-            (item) => !("reply" in item.post.record) || !item.post.record.reply
-          );
-        default:
-          return posts;
-      }
-    },
-    [selectedFeed]
+    [params.author, filterPosts]
   );
 
   // Add this function at the component level
@@ -291,9 +291,9 @@ export default function ProfilePage() {
 
             {/* Posts Feed */}
             <div className="posts">
-              {posts.map((item) => (
+              {posts.map((item, index) => (
                 <PostItem
-                  key={item.post.cid}
+                  key={`${item.post.cid}-${index}`}
                   post={item.post}
                   showTimeAgo={true}
                   showBorder={true}
