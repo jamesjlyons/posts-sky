@@ -48,6 +48,41 @@ export default function ProfilePage() {
   const [selectedFeed, setSelectedFeed] = useState<
     "posts" | "replies" | "media"
   >("posts");
+  const [cursor, setCursor] = useState<string | undefined>();
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Add helper function to filter posts
+  const filterPosts = useCallback(
+    (posts: AppBskyFeedDefs.FeedViewPost[]) => {
+      switch (selectedFeed) {
+        case "replies":
+          return posts.filter(
+            (item) => "reply" in item.post.record && item.post.record.reply
+          );
+        case "media":
+          return posts.filter((item) => {
+            const embed = item.post.embed as {
+              images?: { alt?: string; image: string }[];
+              media?: { images?: { alt?: string; image: string }[] };
+            } | null;
+            return (
+              embed &&
+              ((Array.isArray(embed.images) && embed.images.length > 0) ||
+                (embed.media &&
+                  Array.isArray(embed.media.images) &&
+                  embed.media.images.length > 0))
+            );
+          });
+        case "posts":
+          return posts.filter(
+            (item) => !("reply" in item.post.record) || !item.post.record.reply
+          );
+        default:
+          return posts;
+      }
+    },
+    [selectedFeed]
+  );
 
   // Handle user login
   const handleLogin = async (credentials: {
@@ -64,66 +99,83 @@ export default function ProfilePage() {
     }
   };
 
-  // Fetch profile data and posts
-  const fetchProfile = useCallback(async () => {
-    try {
-      // Resolve the handle to a DID
-      const { data: resolveData } =
-        await agent.com.atproto.identity.resolveHandle({
-          handle: params.author as string,
-        });
+  // Add a handler for feed type changes
+  const handleFeedTypeChange = (feedType: typeof selectedFeed) => {
+    setSelectedFeed(feedType);
+    setCursor(undefined);
+    setPosts([]);
+    fetchProfile();
+  };
 
-      // Fetch both profile and feed data in parallel
-      const [profileData, feedData] = await Promise.all([
-        agent.getProfile({ actor: resolveData.did }),
-        agent.getAuthorFeed({ actor: resolveData.did, limit: 30 }),
-      ]);
+  // Modify fetchProfile to better handle cursor
+  const fetchProfile = useCallback(
+    async (cursorParam?: string) => {
+      try {
+        const { data: resolveData } =
+          await agent.com.atproto.identity.resolveHandle({
+            handle: params.author as string,
+          });
 
-      setProfile(profileData.data);
-      const allPosts = feedData.data.feed;
+        const [profileData, feedData] = await Promise.all([
+          !cursorParam ? agent.getProfile({ actor: resolveData.did }) : null,
+          agent.getAuthorFeed({
+            actor: resolveData.did,
+            limit: 30,
+            cursor: cursorParam,
+          }),
+        ]);
 
-      // Filter posts based on selected feed type
-      switch (selectedFeed) {
-        case "replies":
-          setPosts(
-            allPosts.filter(
-              (item) => "reply" in item.post.record && item.post.record.reply
-            )
-          );
-          break;
-        case "media":
-          setPosts(
-            allPosts.filter((item) => {
-              const embed = item.post.embed as {
-                images?: { alt?: string; image: string }[];
-                media?: { images?: { alt?: string; image: string }[] };
-              } | null;
-              return (
-                embed &&
-                ((Array.isArray(embed.images) && embed.images.length > 0) ||
-                  (embed.media &&
-                    Array.isArray(embed.media.images) &&
-                    embed.media.images.length > 0))
-              );
-            })
-          );
-          break;
-        case "posts":
-          setPosts(
-            allPosts.filter(
-              (item) =>
-                !("reply" in item.post.record) || !item.post.record.reply
-            )
-          );
-          break;
-        default:
-          setPosts(allPosts);
+        if (!cursorParam) {
+          setProfile(profileData!.data);
+        }
+
+        const allPosts = feedData.data.feed;
+        // Only set cursor if we got more posts
+        if (allPosts.length > 0) {
+          setCursor(feedData.data.cursor);
+        } else {
+          setCursor(undefined);
+        }
+
+        const filteredPosts = filterPosts(allPosts);
+        setPosts((prev) =>
+          cursorParam ? [...prev, ...filteredPosts] : filteredPosts
+        );
+      } catch (error) {
+        console.error("Error fetching profile:", error);
       }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
-    setIsLoading(false);
-  }, [params.author, selectedFeed]);
+      setIsLoading(false);
+      setLoadingMore(false);
+    },
+    [params.author, filterPosts]
+  );
+
+  // Add this function at the component level
+  const handleScroll = useCallback(
+    (e: Event) => {
+      const target = e.target as Document;
+      const scrollHeight = target.documentElement.scrollHeight;
+      const scrollTop = target.documentElement.scrollTop;
+      const clientHeight = target.documentElement.clientHeight;
+
+      // If we're near the bottom and not already loading more
+      if (
+        scrollHeight - scrollTop <= clientHeight * 1.5 &&
+        cursor &&
+        !loadingMore
+      ) {
+        setLoadingMore(true);
+        fetchProfile(cursor);
+      }
+    },
+    [cursor, loadingMore, fetchProfile]
+  );
+
+  // Replace the intersection observer useEffect with this:
+  useEffect(() => {
+    document.addEventListener("scroll", handleScroll);
+    return () => document.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   // Check authentication on mount and fetch profile data
   useEffect(() => {
@@ -229,7 +281,7 @@ export default function ProfilePage() {
                       : "text-text-secondary"
                   }`}
                   onClick={() =>
-                    setSelectedFeed(feedType as typeof selectedFeed)
+                    handleFeedTypeChange(feedType as typeof selectedFeed)
                   }
                 >
                   {feedType.charAt(0).toUpperCase() + feedType.slice(1)}
@@ -239,14 +291,17 @@ export default function ProfilePage() {
 
             {/* Posts Feed */}
             <div className="posts">
-              {posts.map((item) => (
+              {posts.map((item, index) => (
                 <PostItem
-                  key={item.post.cid}
+                  key={`${item.post.cid}-${index}`}
                   post={item.post}
                   showTimeAgo={true}
                   showBorder={true}
                 />
               ))}
+              {loadingMore && (
+                <div className="p-4 text-center">Loading more posts...</div>
+              )}
             </div>
           </div>
         }
