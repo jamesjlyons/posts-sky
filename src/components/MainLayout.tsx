@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { usePathname, useSelectedLayoutSegment } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { AppBskyActorDefs } from "@atproto/api";
@@ -19,7 +19,6 @@ export function MainLayout({
   onLogout,
 }: MainLayoutProps) {
   const pathname = usePathname();
-  const segment = useSelectedLayoutSegment();
   const [profile, setProfile] =
     useState<AppBskyActorDefs.ProfileViewDetailed | null>(null);
 
@@ -47,23 +46,38 @@ export function MainLayout({
             aria-label="Home"
             role="menuitem"
           >
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M21.25 23H16v-5.75a1 1 0 00-1-1h-2a1 1 0 00-1 1V23H6.75A1.75 1.75 0 015 21.25v-7.894c0-.94.429-1.83 1.172-2.436l6.838-5.57a1.577 1.577 0 011.98 0l6.838 5.57A3.144 3.144 0 0123 13.356v7.894A1.75 1.75 0 0121.25 23z"
-                fill={
-                  segment === null ? "var(--grey1)" : "var(--nav-icon-color)"
-                }
-              />
-            </svg>
+            {pathname === "/" ? (
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M21.25 23H16v-5.75a1 1 0 00-1-1h-2a1 1 0 00-1 1V23H6.75A1.75 1.75 0 015 21.25v-7.894c0-.94.429-1.83 1.172-2.436l6.838-5.57a1.577 1.577 0 011.98 0l6.838 5.57A3.144 3.144 0 0123 13.356v7.894A1.75 1.75 0 0121.25 23z"
+                  fill="var(--grey1)"
+                />
+              </svg>
+            ) : (
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M21.25 23H15.5v-5.75a.25.25 0 00-.25-.25h-2.5a.25.25 0 00-.25.25V23H6.75A1.75 1.75 0 015 21.25v-7.894c0-.94.429-1.83 1.172-2.436l6.838-5.57a1.577 1.577 0 011.98 0l6.838 5.57A3.144 3.144 0 0123 13.356v7.894A1.75 1.75 0 0121.25 23zM14 6.5a.066.066 0 00-.042.012l-6.839 5.57c-.401.328-.619.796-.619 1.274v7.894c0 .138.112.25.25.25H11v-4.25c0-.966.784-1.75 1.75-1.75h2.5c.966 0 1.75.784 1.75 1.75v4.25h4.25a.25.25 0 00.25-.25v-7.894c0-.478-.218-.946-.62-1.273l-6.838-5.57A.066.066 0 0014 6.5z"
+                  fill="var(--nav-icon-color)"
+                />
+              </svg>
+            )}
           </Link>
           <Link
             href="/notifications"
@@ -71,25 +85,38 @@ export function MainLayout({
             aria-label="Notifications"
             role="menuitem"
           >
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M22 20l-.421-7.421C21.158 7.947 18.186 5 14 5s-7.158 2.947-7.579 7.579L6 20h4.76a3.25 3.25 0 006.48 0H22zM7.588 18.5l.33-5.81c.187-2.016.916-3.553 1.94-4.575C10.878 7.098 12.277 6.5 14 6.5c1.723 0 3.123.598 4.142 1.615 1.024 1.022 1.753 2.559 1.94 4.575l.33 5.81H7.589zm8.144 1.5h-3.464a1.75 1.75 0 003.464 0z"
-                fill={
-                  segment === "notifications"
-                    ? "var(--grey1)"
-                    : "var(--nav-icon-color)"
-                }
-              />
-            </svg>
+            {pathname === "/notifications" ? (
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M6.421 12.579C6.842 7.947 9.814 5 14 5s7.158 2.947 7.579 7.579L22 20h-4.76a3.25 3.25 0 01-6.48 0H6l.421-7.421zM12.268 20a1.75 1.75 0 003.464 0h-3.464z"
+                  fill="var(--grey1)"
+                />
+              </svg>
+            ) : (
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M22 20l-.421-7.421C21.158 7.947 18.186 5 14 5s-7.158 2.947-7.579 7.579L6 20h4.76a3.25 3.25 0 006.48 0H22zM7.588 18.5l.33-5.81c.187-2.016.916-3.553 1.94-4.575C10.878 7.098 12.277 6.5 14 6.5c1.723 0 3.123.598 4.142 1.615 1.024 1.022 1.753 2.559 1.94 4.575l.33 5.81H7.589zm8.144 1.5h-3.464a1.75 1.75 0 003.464 0z"
+                  fill="var(--nav-icon-color)"
+                />
+              </svg>
+            )}
           </Link>
           {profile && (
             <Link
