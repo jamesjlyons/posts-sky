@@ -183,9 +183,12 @@ export function NotificationItem({ notification }: NotificationItemProps) {
   );
 
   // Render the notification with appropriate wrapping
-  // - Like notifications are wrapped in a Link to the original post
-  // - Other notifications are wrapped in a div
-  return notification.reason === "like" && postId ? (
+  // - Like, reply, and mention notifications are wrapped in a Link to the target post
+  // - Other notifications (follow, repost) are wrapped in a div
+  return (notification.reason === "like" ||
+    notification.reason === "reply" ||
+    notification.reason === "mention") &&
+    postId ? (
     <Link
       href={`/${authorHandle}/${postId}`}
       className="block px-6 py-4 border-b border-border-primary hover:bg-hover"
