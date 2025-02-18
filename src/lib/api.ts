@@ -5,11 +5,6 @@ export const agent = new BskyAgent({
   service: "https://bsky.social",
 });
 
-// await agent.login({
-//   identifier: "jameslyons.bsky.social",
-//   password: "rs2u-a3s5-bspp-po3u",
-// });
-
 export type LoginCredentials = {
   identifier: string;
   password: string;

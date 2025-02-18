@@ -9,6 +9,8 @@ import {
 } from "@atproto/api";
 import { formatDistanceToNow, format } from "date-fns";
 import Link from "next/link";
+import { agent } from "../lib/api";
+import { useState, useCallback } from "react";
 
 interface PostItemProps {
   post: AppBskyFeedDefs.PostView;
@@ -38,6 +40,8 @@ export function PostItem({
   const router = useRouter();
   const author = post.author;
   const record = post.record as AppBskyFeedPost.Record;
+  const [isLiked, setIsLiked] = useState(post.viewer?.like ? true : false);
+  const [likeCount, setLikeCount] = useState(post.likeCount || 0);
   const timeAgo = showTimeAgo
     ? formatDistanceToNow(new Date(record.createdAt), { addSuffix: true })
     : null;
@@ -53,6 +57,74 @@ export function PostItem({
     const authorHandle = post.author.handle;
     router.push(`/${authorHandle}/${postId}`);
   };
+
+  const handleLike = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent post click when clicking like button
+
+      try {
+        if (isLiked) {
+          // Unlike the post
+          if (post.viewer?.like) {
+            await agent.deleteLike(post.viewer.like);
+            setIsLiked(false);
+            setLikeCount((prev) => Math.max(0, prev - 1));
+          }
+        } else {
+          // Like the post
+          await agent.like(post.uri, post.cid);
+          setIsLiked(true);
+          setLikeCount((prev) => prev + 1);
+        }
+      } catch (error) {
+        console.error("Error toggling like:", error);
+      }
+    },
+    [post.uri, post.cid, post.viewer?.like, isLiked]
+  );
+
+  const LikeButton = () => (
+    <div
+      className="flex items-center gap-1 cursor-pointer hover:bg-hover rounded-md p-1.5 -m-1.5 transition-colors"
+      onClick={handleLike}
+      role="button"
+      tabIndex={0}
+      aria-label={isLiked ? "Unlike post" : "Like post"}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleLike(e as unknown as React.MouseEvent);
+        }
+      }}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d={
+            isLiked
+              ? "M12.642 19.073a1.25 1.25 0 01-1.284 0l-.003-.002-.006-.004-.018-.011a24.1 24.1 0 01-1.104-.73 25.19 25.19 0 01-2.444-1.948c-.888-.81-1.814-1.79-2.525-2.88C4.55 12.412 4 11.132 4 9.75c0-2.815 2.185-5 5-5 1.193 0 2.219.493 3 1.215.781-.722 1.807-1.215 3-1.215 2.815 0 5 2.185 5 5 0 1.383-.55 2.663-1.258 3.747-.71 1.091-1.637 2.072-2.526 2.88a25.192 25.192 0 01-3.547 2.679l-.018.011-.006.004-.003.002z"
+              : "M11.358 19.073L12 18l.642 1.073a1.25 1.25 0 01-1.284 0zM12 18s6.75-4.04 6.75-8.25C18.75 7.625 17.125 6 15 6c-1.145 0-2.126.656-2.756 1.591a.3.3 0 01-.488 0C11.126 6.656 10.145 6 9 6 6.875 6 5.25 7.625 5.25 9.75 5.25 13.96 12 18 12 18zm0-12.035c-.781-.722-1.807-1.215-3-1.215-2.815 0-5 2.185-5 5 0 1.383.55 2.663 1.258 3.747.71 1.091 1.637 2.072 2.525 2.88a25.19 25.19 0 003.548 2.679l.018.011.006.004.003.002L12 18l.642 1.073.003-.002.006-.004.018-.011.065-.04a24.1 24.1 0 001.04-.69 25.192 25.192 0 002.443-1.948c.888-.81 1.814-1.79 2.526-2.88C19.448 12.412 20 11.132 20 9.75c0-2.815-2.185-5-5-5-1.193 0-2.219.493-3 1.215z"
+          }
+          fill={isLiked ? "#f04b4b" : "#888"}
+        />
+      </svg>
+      {likeCount > 0 && (
+        <span
+          className="text-sm"
+          style={{ color: isLiked ? "#f04b4b" : "#888" }}
+        >
+          {likeCount}
+        </span>
+      )}
+    </div>
+  );
 
   return (
     <div
@@ -160,25 +232,7 @@ export function PostItem({
                 <span className="text-sm">{post.repostCount}</span>
               )}
             </div>
-            <div className="flex items-center gap-1">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M11.358 19.073L12 18l.642 1.073a1.25 1.25 0 01-1.284 0zM12 18s6.75-4.04 6.75-8.25C18.75 7.625 17.125 6 15 6c-1.145 0-2.126.656-2.756 1.591a.3.3 0 01-.488 0C11.126 6.656 10.145 6 9 6 6.875 6 5.25 7.625 5.25 9.75 5.25 13.96 12 18 12 18zm0-12.035c-.781-.722-1.807-1.215-3-1.215-2.815 0-5 2.185-5 5 0 1.383.55 2.663 1.258 3.747.71 1.091 1.637 2.072 2.525 2.88a25.19 25.19 0 003.548 2.679l.018.011.006.004.003.002L12 18l.642 1.073.003-.002.006-.004.018-.011.065-.04a24.1 24.1 0 001.04-.69 25.192 25.192 0 002.443-1.948c.888-.81 1.814-1.79 2.526-2.88C19.448 12.412 20 11.132 20 9.75c0-2.815-2.185-5-5-5-1.193 0-2.219.493-3 1.215z"
-                  fill="currentColor"
-                />
-              </svg>
-              {post.likeCount && post.likeCount > 0 && (
-                <span className="text-sm">{post.likeCount}</span>
-              )}
-            </div>
+            <LikeButton />
           </div>
         </div>
       ) : (
@@ -283,25 +337,7 @@ export function PostItem({
                   <span className="text-sm">{post.repostCount}</span>
                 )}
               </div>
-              <div className="flex items-center gap-1">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M11.358 19.073L12 18l.642 1.073a1.25 1.25 0 01-1.284 0zM12 18s6.75-4.04 6.75-8.25C18.75 7.625 17.125 6 15 6c-1.145 0-2.126.656-2.756 1.591a.3.3 0 01-.488 0C11.126 6.656 10.145 6 9 6 6.875 6 5.25 7.625 5.25 9.75 5.25 13.96 12 18 12 18zm0-12.035c-.781-.722-1.807-1.215-3-1.215-2.815 0-5 2.185-5 5 0 1.383.55 2.663 1.258 3.747.71 1.091 1.637 2.072 2.525 2.88a25.19 25.19 0 003.548 2.679l.018.011.006.004.003.002L12 18l.642 1.073.003-.002.006-.004.018-.011.065-.04a24.1 24.1 0 001.04-.69 25.192 25.192 0 002.443-1.948c.888-.81 1.814-1.79 2.526-2.88C19.448 12.412 20 11.132 20 9.75c0-2.815-2.185-5-5-5-1.193 0-2.219.493-3 1.215z"
-                    fill="currentColor"
-                  />
-                </svg>
-                {post.likeCount && post.likeCount > 0 && (
-                  <span className="text-sm">{post.likeCount}</span>
-                )}
-              </div>
+              <LikeButton />
             </div>
           </div>
         </div>
