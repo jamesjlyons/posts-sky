@@ -4,7 +4,7 @@ A Bluesky client built with Next.js, inspired by Posts.cv. Not feature complete 
 
 ## Current Working Features
 
-- 🌐 Clean, modern interface for Bluesky
+- 💛 Posts.cv feel
 - 💙 Like and interact with posts
 - 🧵 Thread view support
 - 🖼️ Image post support
@@ -19,6 +19,8 @@ A Bluesky client built with Next.js, inspired by Posts.cv. Not feature complete 
 - 📝 Reply to posts
 - 🔍 Search for posts and users
 - 🔄 Repost posts
+- 💛 Lots of small details
+- ⚡ Performance upgrades
 
 ## Tech Stack
 
