@@ -1,4 +1,3 @@
-// src/hooks/useFeeds.ts
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { agent } from "../../lib/api";
 import { queryConfig } from "../../config/query";
