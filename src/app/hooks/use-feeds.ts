@@ -9,17 +9,19 @@ type FeedResponse = {
   cursor?: string;
 };
 
+interface InfiniteFeedResponse extends FeedResponse {
+  pages: FeedResponse[];
+}
+
 const feedUrls = {
   feed1: "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
   feed2: "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
 } as const;
 
 export function useHomeFeed(selectedFeed: "feed1" | "feed2", isAuthenticated: boolean) {
-  return useInfiniteQuery<FeedResponse, Error, FeedResponse, string[], string | undefined>({
+  return useInfiniteQuery<FeedResponse, Error, InfiniteFeedResponse, string[], string | undefined>({
     queryKey: ["home-feed", selectedFeed],
     queryFn: async ({ pageParam }) => {
-      if (!isAuthenticated) return { feed: [], cursor: undefined };
-
       const { data } = await agent.app.bsky.feed.getFeed({
         feed: feedUrls[selectedFeed],
         limit: queryConfig.limit,
@@ -39,7 +41,7 @@ export function useProfileFeed(
   feedType: "posts" | "replies" | "media",
   isAuthenticated: boolean
 ) {
-  return useInfiniteQuery<FeedResponse, Error, FeedResponse, (string | null)[], string | undefined>(
+  return useInfiniteQuery<FeedResponse, Error, InfiniteFeedResponse, (string | null)[], string | undefined>(
     {
       queryKey: ["profile-feed", handle, feedType] as (string | null)[],
       queryFn: async ({ pageParam }) => {
