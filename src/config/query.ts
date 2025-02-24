@@ -1,3 +1,8 @@
+/* 
+This is where we can configure the query cache times and other options
+Everything in a nice central location
+*/
+
 export const queryConfig = {
   homeFeed: {
     staleTime: 1000 * 30, // 30 seconds
@@ -7,7 +12,16 @@ export const queryConfig = {
     staleTime: 1000 * 60, // 1 minute
     cacheTime: 1000 * 60 * 10, // 10 minutes
   },
-  limit: 30,
+  profile: {
+    staleTime: 1000 * 60, // 1 minute
+    cacheTime: 1000 * 60 * 10, // 10 minutes
+  },
+  notifications: {
+    staleTime: 1000 * 15, // 15 seconds
+    cacheTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 30, // Poll every 30 seconds
+  },
+  limit: 25,
   refetchOnWindowFocus: true,
   retry: 2,
 } as const;
