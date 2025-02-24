@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { OpenPanelComponent } from "@openpanel/nextjs";
 import { Providers } from "./providers";
+import { MainLayout } from "../components/MainLayout";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -35,7 +36,7 @@ export default function RootLayout({
           // profileId={'123'}
         />
         <body className={`Root antialiased bg-background text-text-primary text-sm`}>
-          {children}
+          <MainLayout>{children}</MainLayout>
         </body>
       </Providers>
     </html>
