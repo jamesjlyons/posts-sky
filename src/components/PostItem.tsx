@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
+import type {
   AppBskyFeedDefs,
   AppBskyFeedPost,
   AppBskyEmbedImages,
