@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { checkSession } from "~/lib/api";
+import { checkSession, logout } from "~/lib/api";
 import { LoginDialog } from "~/components/LoginDialog";
 import { login } from "~/lib/api";
 import { AuthContext } from "./context";
@@ -23,7 +23,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     setIsAuthenticated(false);
     setShowLoginDialog(true);
   };
