@@ -6,7 +6,7 @@ import { NotificationItem } from "~/components/NotificationItem";
 import { NotificationType } from "../hooks/use-notifications";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
-type FeedType = "all" | "mentions";
+export type FeedType = "all" | "mentions";
 
 const FeedTypeSelector = ({
   selected,
@@ -47,8 +47,10 @@ export default function NotificationsPage() {
   const { isAuthenticated } = useAuth();
   const [selectedFeed, setSelectedFeed] = useState<FeedType>("all");
 
-  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useNotifications(isAuthenticated);
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useNotifications(
+    isAuthenticated,
+    selectedFeed
+  );
 
   const { lastElementRef } = useInfiniteScroll({
     fetchNextPage,

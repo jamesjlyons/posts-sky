@@ -17,9 +17,8 @@ export const queryConfig = {
     cacheTime: 1000 * 60 * 10, // 10 minutes
   },
   notifications: {
-    staleTime: 1000 * 15, // 15 seconds
+    staleTime: 0, // Always fetch fresh on feed switch
     cacheTime: 1000 * 60 * 5, // 5 minutes
-    refetchInterval: 1000 * 30, // Poll every 30 seconds
   },
   limit: 25,
   refetchOnWindowFocus: true,
