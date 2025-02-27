@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useAuth, useNotifications, useInfiniteScroll } from "../hooks";
 import { NotificationItem } from "~/components/NotificationItem";
-import { NotificationType } from "../hooks/use-notifications";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 export type FeedType = "all" | "mentions";
@@ -58,20 +57,7 @@ export default function NotificationsPage() {
     isFetchingNextPage,
   });
 
-  const filterNotifications = useCallback(
-    (notifications: NotificationType[]) => {
-      if (selectedFeed === "mentions") {
-        return notifications.filter(
-          (notif) => notif.reason === "mention" || notif.reason === "reply"
-        );
-      }
-      return notifications;
-    },
-    [selectedFeed]
-  );
-
-  const allNotifications =
-    data?.pages.flatMap((page) => filterNotifications(page.notifications)) ?? [];
+  const allNotifications = data?.pages.flatMap((page) => page.notifications) ?? [];
 
   return (
     <div className="flex flex-col">

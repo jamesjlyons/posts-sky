@@ -5,6 +5,14 @@ import type { AppBskyNotificationListNotifications } from "@atproto/api";
 import type { FeedType } from "../notifications/page";
 
 export type NotificationType = AppBskyNotificationListNotifications.Notification;
+export type NotificationReason =
+  | "like"
+  | "repost"
+  | "follow"
+  | "mention"
+  | "reply"
+  | "quote"
+  | "starterpack-joined";
 
 interface NotificationsResponse {
   notifications: NotificationType[];
@@ -15,10 +23,16 @@ export function useNotifications(isAuthenticated: boolean, selectedFeed: FeedTyp
   return useInfiniteQuery<NotificationsResponse>({
     queryKey: ["notifications", selectedFeed],
     queryFn: async ({ pageParam }) => {
-      const { data } = await agent.listNotifications({
+      const params: AppBskyNotificationListNotifications.QueryParams = {
         limit: queryConfig.limit,
         cursor: pageParam as string | undefined,
-      });
+      };
+
+      if (selectedFeed === "mentions") {
+        params.reasons = ["mention", "reply"];
+      }
+
+      const { data } = await agent.listNotifications(params);
 
       // DEBUGGING LOG
       console.log(
