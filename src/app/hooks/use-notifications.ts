@@ -34,17 +34,6 @@ export function useNotifications(isAuthenticated: boolean, selectedFeed: FeedTyp
 
       const { data } = await agent.listNotifications(params);
 
-      // DEBUGGING LOG
-      console.log(
-        "Raw notifications:",
-        data.notifications.map((n) => ({
-          reason: n.reason,
-          uri: n.uri,
-          isReply: n.reason === "reply",
-          isMention: n.reason === "mention",
-        }))
-      );
-
       return data;
     },
     initialPageParam: undefined,
