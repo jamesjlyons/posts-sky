@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { OpenPanelComponent } from "@openpanel/nextjs";
-
+import { Providers } from "./providers";
+import { MainLayout } from "../components/MainLayout";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -25,19 +26,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <OpenPanelComponent
-        clientId="5c738962-4cac-43d2-b7fc-04f1b4786a38"
-        trackScreenViews={true}
-        // trackAttributes={true}
-        // trackOutgoingLinks={true}
-        // If you have a user id, you can pass it here to identify the user
-        // profileId={'123'}
-      />
-      <body
-        className={`Root antialiased bg-background text-text-primary text-sm`}
-      >
-        {children}
-      </body>
+      <Providers>
+        <OpenPanelComponent
+          clientId="5c738962-4cac-43d2-b7fc-04f1b4786a38"
+          trackScreenViews={true}
+          // trackAttributes={true}
+          // trackOutgoingLinks={true}
+          // If you have a user id, you can pass it here to identify the user
+          // profileId={'123'}
+        />
+        <body className={`Root antialiased bg-background text-text-primary text-sm`}>
+          <MainLayout>{children}</MainLayout>
+        </body>
+      </Providers>
     </html>
   );
 }

@@ -144,5 +144,28 @@ body {
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+    scrollbar-gutter: stable; /* Prevent layout shift on page load */
   }
+
+  /* Prevent console warning about scroll-behavior */
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/*
+  James: I don't know tailwind super well so if there is a more tailwind way to do this so we don't pollute global css, please let me know.
+*/
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.spin {
+  animation: spin 1s steps(12) infinite;
 }

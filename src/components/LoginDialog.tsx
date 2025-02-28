@@ -6,10 +6,7 @@ import { Dialog } from "@base-ui-components/react/dialog";
 interface LoginDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: (credentials: {
-    identifier: string;
-    password: string;
-  }) => Promise<void>;
+  onLogin: (credentials: { identifier: string; password: string }) => Promise<void>;
 }
 
 export function LoginDialog({ isOpen, onClose, onLogin }: LoginDialogProps) {
@@ -34,11 +31,9 @@ export function LoginDialog({ isOpen, onClose, onLogin }: LoginDialogProps) {
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 bg-backdrop z-20" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-background p-6 rounded-lg shadow-lg w-[400px] z-30">
-          <Dialog.Title className="text-lg font-medium mb-4">
-            Login to PostsSky
-          </Dialog.Title>
-          <Dialog.Description>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <Dialog.Title className="text-lg font-medium mb-4">Login to PostsSky</Dialog.Title>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Dialog.Description>
               <div>
                 <label className="block text-xs mb-2">
                   Bluesky Handle
@@ -72,9 +67,7 @@ export function LoginDialog({ isOpen, onClose, onLogin }: LoginDialogProps) {
                   />
                 </label>
               </div>
-              {loginError && (
-                <p className="text-red-500 text-sm">{loginError}</p>
-              )}
+              {loginError && <p className="text-red-500 text-sm">{loginError}</p>}
               <div className="flex justify-end gap-2">
                 {/* <Dialog.Close className="px-3 py-1.5 text-xs text-text-primary rounded-lg h-8 cursor-pointer">
                   Cancel
@@ -86,8 +79,8 @@ export function LoginDialog({ isOpen, onClose, onLogin }: LoginDialogProps) {
                   Login
                 </button>
               </div>
-            </form>
-          </Dialog.Description>
+            </Dialog.Description>
+          </form>
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>
