@@ -2,15 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type {
-  AppBskyFeedDefs,
-  AppBskyFeedPost,
-  AppBskyEmbedImages,
-} from "@atproto/api";
+import type { AppBskyFeedDefs, AppBskyFeedPost, AppBskyEmbedImages } from "@atproto/api";
 import { formatDistanceToNow, format } from "date-fns";
 import Link from "next/link";
 import { agent } from "../lib/api";
 import { useState, useCallback } from "react";
+import { RichText } from "./RichText";
 
 interface PostItemProps {
   post: AppBskyFeedDefs.PostView;
@@ -169,7 +166,9 @@ export function PostItem({
               <div className="text-text-tertiary">@{author.handle}</div>
             </div>
           </div>
-          <div className="mb-3 text-xl text-text-secondary">{record.text}</div>
+          <div className="mb-3 text-xl text-text-secondary">
+            <RichText text={record.text} facets={record.facets} />
+          </div>
           {post.embed?.$type === "app.bsky.embed.images#view" && (
             <div className="grid gap-2 media-container">
               {(post.embed as AppBskyEmbedImages.View).images.map(
@@ -273,7 +272,7 @@ export function PostItem({
               )}
             </div>
             <div className="text-text-secondary">
-              {record.text}
+              <RichText text={record.text} facets={record.facets} />
               {post.embed?.$type === "app.bsky.embed.images#view" && (
                 <div className="grid gap-2 mt-2 media-container">
                   {(post.embed as AppBskyEmbedImages.View).images.map(
