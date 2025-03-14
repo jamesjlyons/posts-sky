@@ -11,6 +11,7 @@ import { BackArrowIcon } from "../icons/back-arrow";
 import Link from "next/link";
 import type { AppBskyActorDefs, AppBskyFeedDefs } from "@atproto/api";
 import { ProfileDescription } from "~/components/ProfileDescription";
+
 function ProfileHeader({ profile }: { profile: AppBskyActorDefs.ProfileViewDetailed }) {
   return (
     <div>
@@ -112,8 +113,10 @@ export default function ProfilePage() {
   const params = useParams();
   const { isAuthenticated } = useAuth();
   const [selectedFeed, setSelectedFeed] = useState<"posts" | "replies" | "media">("posts");
+  // Need to decode the identifier for DIDs
+  const identifier = decodeURIComponent(params.author as string);
 
-  const { data: profile } = useProfile(params.author as string, isAuthenticated);
+  const { data: profile } = useProfile(identifier, isAuthenticated);
 
   const {
     data: feedData,
@@ -121,7 +124,7 @@ export default function ProfilePage() {
     hasNextPage,
     isFetchingNextPage,
     isPending: isFeedPending,
-  } = useProfileFeed(params.author as string, selectedFeed, isAuthenticated);
+  } = useProfileFeed(identifier, selectedFeed, isAuthenticated);
 
   const { lastElementRef } = useInfiniteScroll({
     fetchNextPage,
