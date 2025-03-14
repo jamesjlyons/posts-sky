@@ -36,7 +36,6 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
         </a>
       );
     } else if (mention && !disableLinks && AppBskyRichtextFacet.validateMention(mention).success) {
-      console.log("mention", mention);
       elements.push(
         <Link
           key={key}
