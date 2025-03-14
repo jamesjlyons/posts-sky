@@ -29,23 +29,30 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
           target="_blank"
           rel="noopener noreferrer"
           className="text-text-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}
         >
           {segment.text}
         </a>
       );
     } else if (mention && !disableLinks && AppBskyRichtextFacet.validateMention(mention).success) {
+      console.log("mention", mention);
       elements.push(
         <Link
           key={key}
-          href={`/profile/${mention.did}`}
+          href={`/${mention.did}`}
           className="text-text-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}
         >
           {segment.text}
         </Link>
       );
     } else if (tag && !disableLinks && AppBskyRichtextFacet.validateTag(tag).success) {
       elements.push(
-        <Link key={key} href={`/search?q=${encodeURIComponent(tag.tag)}`}>
+        <Link
+          key={key}
+          href={`/search?q=${encodeURIComponent(tag.tag)}`}
+          onClick={(e) => e.stopPropagation()}
+        >
           {segment.text}
         </Link>
       );
