@@ -19,7 +19,8 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
   for (const segment of richText.segments()) {
     const link = segment.link;
     const mention = segment.mention;
-    const tag = segment.tag;
+    // TODO: Add search route for hashtags, then uncomment this
+    // const tag = segment.tag;
 
     if (link && !disableLinks && AppBskyRichtextFacet.validateLink(link).success) {
       elements.push(
