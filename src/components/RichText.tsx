@@ -19,7 +19,8 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
   for (const segment of richText.segments()) {
     const link = segment.link;
     const mention = segment.mention;
-    const tag = segment.tag;
+    // TODO: Add search route for hashtags, then uncomment this
+    // const tag = segment.tag;
 
     if (link && !disableLinks && AppBskyRichtextFacet.validateLink(link).success) {
       elements.push(
@@ -29,6 +30,7 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
           target="_blank"
           rel="noopener noreferrer"
           className="text-text-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}
         >
           {segment.text}
         </a>
@@ -37,18 +39,24 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
       elements.push(
         <Link
           key={key}
-          href={`/profile/${mention.did}`}
+          href={`/${mention.did}`}
           className="text-text-primary hover:underline"
+          onClick={(e) => e.stopPropagation()}
         >
           {segment.text}
         </Link>
       );
-    } else if (tag && !disableLinks && AppBskyRichtextFacet.validateTag(tag).success) {
-      elements.push(
-        <Link key={key} href={`/search?q=${encodeURIComponent(tag.tag)}`}>
-          {segment.text}
-        </Link>
-      );
+      // TODO: Add search route for hashtags, then uncomment this
+      // } else if (tag && !disableLinks && AppBskyRichtextFacet.validateTag(tag).success) {
+      //   elements.push(
+      //     <Link
+      //       key={key}
+      //       href={`/search?q=${encodeURIComponent(tag.tag)}`}
+      //       onClick={(e) => e.stopPropagation()}
+      //     >
+      //       {segment.text}
+      //     </Link>
+      //   );
     } else {
       elements.push(segment.text);
     }

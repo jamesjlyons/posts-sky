@@ -20,18 +20,18 @@ export function useCurrentProfile(isAuthenticated: boolean) {
 }
 
 // For viewing other users' profiles
-export function useProfile(handle: string | null, isAuthenticated: boolean) {
+export function useProfile(identifier: string | null, isAuthenticated: boolean) {
   return useQuery<AppBskyActorDefs.ProfileViewDetailed>({
-    queryKey: ["profile", handle],
+    queryKey: ["profile", identifier],
     queryFn: async () => {
-      if (!handle) throw new Error("Handle is required");
-      const { data: resolveData } = await agent.com.atproto.identity.resolveHandle({
-        handle,
+      if (!identifier) throw new Error("Identifier is required");
+
+      const { data } = await agent.getProfile({
+        actor: identifier,
       });
-      const profileData = await agent.getProfile({ actor: resolveData.did });
-      return profileData.data;
+      return data;
     },
-    enabled: !!handle && isAuthenticated,
+    enabled: !!identifier && isAuthenticated,
     ...queryConfig.profile,
   });
 }

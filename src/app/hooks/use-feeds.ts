@@ -49,7 +49,7 @@ export function useHomeFeed(
 }
 
 export function useProfileFeed(
-  handle: string | null,
+  identifier: string | null,
   feedType: "posts" | "replies" | "media",
   isAuthenticated: boolean
 ) {
@@ -60,17 +60,12 @@ export function useProfileFeed(
     (string | null)[],
     string | undefined
   >({
-    queryKey: ["profile-feed", handle, feedType] as (string | null)[],
+    queryKey: ["profile-feed", identifier, feedType] as (string | null)[],
     queryFn: async ({ pageParam }) => {
-      if (!handle || !isAuthenticated) return { feed: [], cursor: undefined };
-
-      const { data: resolveData } =
-        await agent.com.atproto.identity.resolveHandle({
-          handle,
-        });
+      if (!identifier || !isAuthenticated) return { feed: [], cursor: undefined };
 
       const feedData = await agent.getAuthorFeed({
-        actor: resolveData.did,
+        actor: identifier,
         limit: queryConfig.limit,
         cursor: pageParam,
       });
@@ -79,7 +74,7 @@ export function useProfileFeed(
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.cursor,
-    enabled: !!handle && isAuthenticated,
+    enabled: !!identifier && isAuthenticated,
     ...queryConfig.profileFeed,
   });
 }
