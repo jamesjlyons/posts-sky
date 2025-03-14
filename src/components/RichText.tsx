@@ -46,16 +46,17 @@ export function RichText({ text, facets, disableLinks = false }: RichTextProps) 
           {segment.text}
         </Link>
       );
-    } else if (tag && !disableLinks && AppBskyRichtextFacet.validateTag(tag).success) {
-      elements.push(
-        <Link
-          key={key}
-          href={`/search?q=${encodeURIComponent(tag.tag)}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {segment.text}
-        </Link>
-      );
+      // TODO: Add search route for hashtags, then uncomment this
+      // } else if (tag && !disableLinks && AppBskyRichtextFacet.validateTag(tag).success) {
+      //   elements.push(
+      //     <Link
+      //       key={key}
+      //       href={`/search?q=${encodeURIComponent(tag.tag)}`}
+      //       onClick={(e) => e.stopPropagation()}
+      //     >
+      //       {segment.text}
+      //     </Link>
+      //   );
     } else {
       elements.push(segment.text);
     }
