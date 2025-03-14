@@ -10,7 +10,7 @@ import { filterPosts } from "../../utils/posts";
 import { BackArrowIcon } from "../icons/back-arrow";
 import Link from "next/link";
 import type { AppBskyActorDefs, AppBskyFeedDefs } from "@atproto/api";
-
+import { ProfileDescription } from "~/components/ProfileDescription";
 function ProfileHeader({ profile }: { profile: AppBskyActorDefs.ProfileViewDetailed }) {
   return (
     <div>
@@ -37,7 +37,11 @@ function ProfileHeader({ profile }: { profile: AppBskyActorDefs.ProfileViewDetai
             <p className="text-text-tertiary">@{profile.handle}</p>
           </div>
         </div>
-        {profile.description && <p className="mt-4 text-text-secondary">{profile.description}</p>}
+        {profile.description && (
+          <p className="mt-4 text-text-secondary">
+            <ProfileDescription description={profile.description} />
+          </p>
+        )}
       </div>
     </div>
   );
