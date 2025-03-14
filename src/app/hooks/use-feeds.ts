@@ -13,12 +13,25 @@ interface InfiniteFeedResponse extends FeedResponse {
 }
 
 const feedUrls = {
-  feed1: "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
-  feed2: "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
+  feed1:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-only",
+  feed2:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/aaahltvlqwftc",
+  feed3:
+    "at://did:plc:tft77e5qkblxtneeib4lp3zk/app.bsky.feed.generator/posts-cv-media",
 } as const;
 
-export function useHomeFeed(selectedFeed: "feed1" | "feed2", isAuthenticated: boolean) {
-  return useInfiniteQuery<FeedResponse, Error, InfiniteFeedResponse, string[], string | undefined>({
+export function useHomeFeed(
+  selectedFeed: "feed1" | "feed2" | "feed3",
+  isAuthenticated: boolean
+) {
+  return useInfiniteQuery<
+    FeedResponse,
+    Error,
+    InfiniteFeedResponse,
+    string[],
+    string | undefined
+  >({
     queryKey: ["home-feed", selectedFeed],
     queryFn: async ({ pageParam }) => {
       const { data } = await agent.app.bsky.feed.getFeed({
@@ -40,28 +53,33 @@ export function useProfileFeed(
   feedType: "posts" | "replies" | "media",
   isAuthenticated: boolean
 ) {
-  return useInfiniteQuery<FeedResponse, Error, InfiniteFeedResponse, (string | null)[], string | undefined>(
-    {
-      queryKey: ["profile-feed", handle, feedType] as (string | null)[],
-      queryFn: async ({ pageParam }) => {
-        if (!handle || !isAuthenticated) return { feed: [], cursor: undefined };
+  return useInfiniteQuery<
+    FeedResponse,
+    Error,
+    InfiniteFeedResponse,
+    (string | null)[],
+    string | undefined
+  >({
+    queryKey: ["profile-feed", handle, feedType] as (string | null)[],
+    queryFn: async ({ pageParam }) => {
+      if (!handle || !isAuthenticated) return { feed: [], cursor: undefined };
 
-        const { data: resolveData } = await agent.com.atproto.identity.resolveHandle({
+      const { data: resolveData } =
+        await agent.com.atproto.identity.resolveHandle({
           handle,
         });
 
-        const feedData = await agent.getAuthorFeed({
-          actor: resolveData.did,
-          limit: queryConfig.limit,
-          cursor: pageParam,
-        });
+      const feedData = await agent.getAuthorFeed({
+        actor: resolveData.did,
+        limit: queryConfig.limit,
+        cursor: pageParam,
+      });
 
-        return feedData.data;
-      },
-      initialPageParam: undefined,
-      getNextPageParam: (lastPage) => lastPage.cursor,
-      enabled: !!handle && isAuthenticated,
-      ...queryConfig.profileFeed,
-    }
-  );
+      return feedData.data;
+    },
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage.cursor,
+    enabled: !!handle && isAuthenticated,
+    ...queryConfig.profileFeed,
+  });
 }
