@@ -153,19 +153,60 @@ body {
   }
 }
 
-/*
-  James: I don't know tailwind super well so if there is a more tailwind way to do this so we don't pollute global css, please let me know.
-*/
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+@layer components {
+  /* ProseMirror Editor Styles */
+  .ProseMirror {
+    min-height: inherit;
   }
 
-  to {
-    transform: rotate(1turn);
+  .ProseMirror-dark {
+    color: var(--backgroundColor);
+  }
+
+  .ProseMirror p {
+    margin: 0;
+    color: var(--grey2);
+  }
+
+  .ProseMirror p.is-editor-empty:first-child::before {
+    color: var(--grey3);
+    content: attr(data-placeholder);
+    height: 0;
+    pointer-events: none;
+    font-size: 16px;
+    display: inline-block;
+    position: absolute;
+  }
+
+  .ProseMirror .mention {
+    color: var(--grey1);
+  }
+
+  .ProseMirror a,
+  .ProseMirror .autolink {
+    color: var(--grey1);
+  }
+
+  /* Remove focus state on inputs */
+  /* WARNING: This is not accessible */
+  .ProseMirror-focused {
+    outline: 0;
   }
 }
 
-.spin {
-  animation: spin 1s steps(12) infinite;
+/* Animations */
+@layer utilities {
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  .spin {
+    animation: spin 1s steps(12) infinite;
+  }
 }
