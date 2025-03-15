@@ -4,12 +4,12 @@ import React, { useState, useRef } from "react";
 import { PostItem } from "../components/PostItem";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 import { useAuth, useHomeFeed, useInfiniteScroll } from "./hooks";
+import { HomeHeader } from "~/components/HomeHeader";
+import { ComposePost } from "~/components/Composer";
 
 export default function Homepage() {
   const { isAuthenticated } = useAuth();
-  const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2" | "feed3">(
-    "feed1"
-  );
+  const [selectedFeed, setSelectedFeed] = useState<"feed1" | "feed2" | "feed3">("feed1");
   const loadingRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -30,38 +30,8 @@ export default function Homepage() {
 
   return (
     <>
-      <ul className="feedlist text-text-secondary font-medium list-none tap-highlight-color-[rgba(0,0,0,0)] font-smoothing-antialiased m-0 box-border h-15 shadow-[0_1px_0_var(--transparentBorder)] flex flex-row px-6 items-center w-full sticky top-0 bg-[var(--backgroundColor)] z-10 gap-6 justify-center">
-        <li
-          className={`text-text-primary cursor-pointer ${
-            selectedFeed === "feed1"
-              ? "text-text-primary"
-              : "text-text-secondary"
-          }`}
-          onClick={() => setSelectedFeed("feed1")}
-        >
-          Posts
-        </li>
-        <li
-          className={`text-text-primary cursor-pointer ${
-            selectedFeed === "feed2"
-              ? "text-text-primary"
-              : "text-text-secondary"
-          }`}
-          onClick={() => setSelectedFeed("feed2")}
-        >
-          Everything
-        </li>
-        <li
-          className={`text-text-primary cursor-pointer ${
-            selectedFeed === "feed3"
-              ? "text-text-primary"
-              : "text-text-secondary"
-          }`}
-          onClick={() => setSelectedFeed("feed3")}
-        >
-          Media
-        </li>
-      </ul>
+      <HomeHeader selectedFeed={selectedFeed} setSelectedFeed={setSelectedFeed} />
+      <ComposePost />
 
       {isLoading ? (
         <LoadingSpinner />
