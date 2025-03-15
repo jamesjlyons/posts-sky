@@ -1,4 +1,3 @@
-// src/components/composer/TextInput.tsx
 import { useEditor, EditorContent } from "@tiptap/react";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
