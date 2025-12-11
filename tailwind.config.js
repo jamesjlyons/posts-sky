@@ -1,13 +1,12 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
       colors: {
-        hover: 'rgba(0, 0, 0, 0.05)',
+        hover: "rgba(0, 0, 0, 0.05)", // or any color you prefer
+        // ... other colors
       },
       spacing: {
-        15: '60px',
+        15: "60px",
       },
     },
   },
